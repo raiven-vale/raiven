@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>VOID//RUN</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    background: #050508;
+
+    color: #e8e8ff;
+
+    font-family: Arial, sans-serif;
+
+    overflow: hidden;
+}
+
+body::before {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            rgba(120,70,255,.05) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(120,70,255,.05) 1px,
+            transparent 1px
+        );
+
+    background-size: 40px 40px;
+
+    pointer-events: none;
+}
+
+#gameScreen {
+
+    width: 100vw;
+
+    height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+.top {
+
+    width: min(800px,90vw);
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 10px;
+
+    color: #8e7cff;
+
+    font-size: .7rem;
+
+    letter-spacing: 3px;
+}
+
+#game {
+
+    width: min(800px,90vw);
+
+    height: min(480px,65vh);
+
+    position: relative;
+
+    overflow: hidden;
+
+    border: 1px solid #7650ff;
+
+    background: #08080f;
+
+    box-shadow:
+        0 0 25px rgba(118,80,255,.2),
+        inset 0 0 50px rgba(118,80,255,.05);
+}
+
+#player {
+
+    width: 24px;
+
+    height: 24px;
+
+    position: absolute;
+
+    background: #c9bdff;
+
+    transform: rotate(45deg);
+
+    box-shadow:
+        0 0 10px #c9bdff,
+        0 0 25px #7650ff;
+}
+
+.obstacle {
+
+    position: absolute;
+
+    background: #ff4d7d;
+
+    box-shadow:
+        0 0 12px #ff4d7d,
+        0 0 30px #ff4d7d;
+}
+
+#message {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 5;
+
+    background: rgba(5,5,8,.9);
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+}
+
+#message h1 {
+
+    color: #ff4d7d;
+
+    letter-spacing: 6px;
+
+    text-shadow: 0 0 20px #ff4d7d;
+}
+
+#message p {
+
+    color: #777;
+
+    font-size: .7rem;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 20px;
+}
+
+button {
+
+    background: transparent;
+
+    color: #e8e8ff;
+
+    border: 1px solid #7650ff;
+
+    padding: 11px 25px;
+
+    cursor: pointer;
+
+    letter-spacing: 3px;
+
+    font-weight: bold;
+}
+
+button:hover {
+
+    background: #7650ff;
+
+    box-shadow: 0 0 25px #7650ff;
+}
+
+.back {
+
+    margin-top: 15px;
+
+    border-color: #333;
+
+    font-size: .6rem;
+
+    padding: 8px 18px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div id="gameScreen">
+
+
+    <div class="top">
+
+        <span>
+            VOID//RUN
+        </span>
+
+        <span>
+            SCORE:
+            <b id="score">0</b>
+        </span>
+
+    </div>
+
+
+    <div id="game">
+
+        <div id="player"></div>
+
+
+        <div id="message">
+
+            <h1>
+                VOID//RUN
+            </h1>
+
+            <p>
+                WASD / ARROW KEYS
+            </p>
+
+            <button onclick="startGame()">
+                START
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <button
+    class="back"
+    onclick="location.href='../index.html'">
+
+        ← ARCADE
+
+    </button>
+
+
+</div>
+
+
+<script>
+
+const game =
+    document.getElementById("game");
+
+const player =
+    document.getElementById("player");
+
+const message =
+    document.getElementById("message");
+
+const scoreDisplay =
+    document.getElementById("score");
+
+
+let x = 70;
+
+let y = 200;
+
+let score = 0;
+
+let speed = 4;
+
+let running = false;
+
+let keys = {};
+
+let obstacles = [];
+
+
+document.addEventListener(
+    "keydown",
+    e => {
+
+        keys[e.key.toLowerCase()] = true;
+
+    }
+);
+
+
+document.addEventListener(
+    "keyup",
+    e => {
+
+        keys[e.key.toLowerCase()] = false;
+
+    }
+);
+
+
+function startGame() {
+
+    obstacles.forEach(
+        o => o.remove()
+    );
+
+    obstacles = [];
+
+    x = 70;
+
+    y = game.clientHeight / 2;
+
+    score = 0;
+
+    speed = 4;
+
+    scoreDisplay.textContent = "0";
+
+    player.style.left = x + "px";
+
+    player.style.top = y + "px";
+
+    message.style.display = "none";
+
+    running = true;
+
+    spawnObstacle();
+
+    gameLoop();
+
+}
+
+
+function gameLoop() {
+
+    if (!running)
+        return;
+
+
+    const moveSpeed = 6;
+
+
+    if (
+        keys["w"] ||
+        keys["arrowup"]
+    )
+        y -= moveSpeed;
+
+
+    if (
+        keys["s"] ||
+        keys["arrowdown"]
+    )
+        y += moveSpeed;
+
+
+    if (
+        keys["a"] ||
+        keys["arrowleft"]
+    )
+        x -= moveSpeed;
+
+
+    if (
+        keys["d"] ||
+        keys["arrowright"]
+    )
+        x += moveSpeed;
+
+
+    x = Math.max(
+        0,
+        Math.min(
+            game.clientWidth - 25,
+            x
+        )
+    );
+
+
+    y = Math.max(
+        0,
+        Math.min(
+            game.clientHeight - 25,
+            y
+        )
+    );
+
+
+    player.style.left = x + "px";
+
+    player.style.top = y + "px";
+
+
+    obstacles.forEach(
+        (obstacle,index) => {
+
+            let ox =
+                parseFloat(
+                    obstacle.style.left
+                );
+
+
+            ox -= speed;
+
+
+            obstacle.style.left =
+                ox + "px";
+
+
+            const p =
+                player.getBoundingClientRect();
+
+
+            const o =
+                obstacle.getBoundingClientRect();
+
+
+            if (
+                p.left < o.right &&
+                p.right > o.left &&
+                p.top < o.bottom &&
+                p.bottom > o.top
+            ) {
+
+                gameOver();
+
+            }
+
+
+            if (ox < -60) {
+
+                obstacle.remove();
+
+                obstacles.splice(
+                    index,
+                    1
+                );
+
+                score += 10;
+
+                scoreDisplay.textContent =
+                    score;
+
+                speed += .08;
+
+            }
+
+        }
+    );
+
+
+    requestAnimationFrame(
+        gameLoop
+    );
+
+}
+
+
+function spawnObstacle() {
+
+    if (!running)
+        return;
+
+
+    const obstacle =
+        document.createElement("div");
+
+
+    obstacle.className =
+        "obstacle";
+
+
+    const size =
+        Math.random() * 35 + 20;
+
+
+    obstacle.style.width =
+        size + "px";
+
+
+    obstacle.style.height =
+        size + "px";
+
+
+    obstacle.style.left =
+        game.clientWidth + "px";
+
+
+    obstacle.style.top =
+        Math.random() *
+        (game.clientHeight - size)
+        + "px";
+
+
+    game.appendChild(
+        obstacle
+    );
+
+
+    obstacles.push(
+        obstacle
+    );
+
+
+    setTimeout(
+        spawnObstacle,
+        Math.max(
+            500,
+            1400 - score * 2
+        )
+    );
+
+}
+
+
+function gameOver() {
+
+    running = false;
+
+
+    message.innerHTML = `
+
+        <h1>
+            CONNECTION LOST
+        </h1>
+
+        <p>
+            FINAL SCORE: ${score}
+        </p>
+
+        <button onclick="startGame()">
+            RETRY
+        </button>
+
+    `;
+
+
+    message.style.display =
+        "flex";
+
+}
+
+</script>
+
+
+</body>
+
+</html>
