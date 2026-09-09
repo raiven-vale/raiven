@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geometry Dash Web Edition</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0a0a12;
+      color: #ffffff;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: 24px;
+      letter-spacing: 2px;
+      color: #00f0ff;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    }
+
+    #game-container {
+      position: relative;
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid #00f0ff;
+    }
+
+    canvas {
+      display: block;
+      background: #0f0f1f;
+    }
+
+    .controls-hint {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #8888aa;
+    }
+
+    kbd {
+      background: #22223b;
+      border: 1px solid #444466;
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: #00f0ff;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>GEOMETRY DASH</h1>
+  
+  <div id="game-container">
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+  </div>
+
+  <div class="controls-hint">
+    Press <kbd>SPACE</kbd>, <kbd>UP ARROW</kbd>, or <b>CLICK / TAP</b> to Jump!
+  </div>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // --- GAME PARAMETERS ---
+    const CANVAS_WIDTH = 800;
+    const CANVAS_HEIGHT = 400;
+    const FLOOR_Y = 320;
+    const GAME_SPEED = 6;
+    const GRAVITY = 0.8;
+    const JUMP_FORCE = -12.5;
+
+    // --- GAME STATE ---
+    let gameState = 'START'; // 'START', 'PLAYING', 'GAMEOVER', 'VICTORY'
+    let attemptCount = 1;
+    let cameraX = 0;
+    let isInputDown = false;
+
+    // --- PLAYER OBJECT ---
+    const player = {
+      x: 100,
+      y: 0,
+      size: 32,
+      vy: 0,
+      rotation: 0,
+      isGrounded: false,
+      reset() {
+        this.x = 100;
+        this.y = FLOOR_Y - this.size;
+        this.vy = 0;
+        this.rotation = 0;
+        this.isGrounded = true;
+      }
+    };
+
+    // --- LEVEL DESIGN ---
+    // Types: 's' = Spike, 'b' = Block, 'sb' = Spike on Block
+    const levelLength = 6000; // total length of level in px
+    let obstacles = [];
+
+    function generateLevel() {
+      obstacles = [];
+      // Pre-designed level layout relative to X coordinates
+      const layout = [
+        { x: 500, type: 's' },
+        { x: 800, type: 's' },
+        { x: 1050, type: 's' },
+        { x: 1100, type: 's' }, // double spike
+        { x: 1400, type: 'b', h: 1 },
+        { x: 1500, type: 'b', h: 1 },
+        { x: 1600, type: 'b', h: 1 },
+        { x: 1900, type: 's' },
+        { x: 2100, type: 'b', h: 1 },
+        { x: 2140, type: 'b', h: 2 },
+        { x: 2180, type: 'b', h: 3 },
+        { x: 2400, type: 's' },
+        { x: 2440, type: 's' },
+        { x: 2480, type: 's' }, // triple spike
+        { x: 2800, type: 'b', h: 1 },
+        { x: 2840, type: 'sb', h: 1 },
+        { x: 2880, type: 'b', h: 1 },
+        { x: 3200, type: 'b', h: 2 },
+        { x: 3400, type: 'b', h: 2 },
+        { x: 3600, type: 's' },
+        { x: 3900, type: 'b', h: 1 },
+        { x: 4100, type: 'b', h: 2 },
+        { x: 4300, type: 'b', h: 3 },
+        { x: 4500, type: 's' },
+        { x: 4540, type: 's' },
+        { x: 4900, type: 's' },
+        { x: 5200, type: 'b', h: 1 },
+        { x: 5500, type: 's' }
+      ];
+
+      layout.forEach(item => {
+        const blockSize = 40;
+        const heightMultiplier = item.h || 0;
+        const y = FLOOR_Y - (heightMultiplier * blockSize);
+
+        if (item.type === 's') {
+          obstacles.push({ type: 'spike', x: item.x, y: FLOOR_Y - 35, w: 35, h: 35 });
+        } else if (item.type === 'b') {
+          obstacles.push({ type: 'block', x: item.x, y: y, w: blockSize, h: blockSize });
+        } else if (item.type === 'sb') {
+          obstacles.push({ type: 'block', x: item.x, y: y, w: blockSize, h: blockSize });
+          obstacles.push({ type: 'spike', x: item.x + 2.5, y: y - 35, w: 35, h: 35 });
+        }
+      });
+    }
+
+    // --- INPUT HANDLING ---
+    function handleInputStart(e) {
+      if (e.type === 'keydown' && e.code !== 'Space' && e.code !== 'ArrowUp') return;
+      e.preventDefault();
+      
+      isInputDown = true;
+
+      if (gameState === 'START' || gameState === 'GAMEOVER' || gameState === 'VICTORY') {
+        if (gameState === 'GAMEOVER') attemptCount++;
+        if (gameState === 'VICTORY') attemptCount = 1;
+        
+        resetGame();
+        gameState = 'PLAYING';
+      }
+    }
+
+    function handleInputEnd(e) {
+      if (e.type === 'keyup' && e.code !== 'Space' && e.code !== 'ArrowUp') return;
+      isInputDown = false;
+    }
+
+    window.addEventListener('keydown', handleInputStart);
+    window.addEventListener('keyup', handleInputEnd);
+    canvas.addEventListener('mousedown', handleInputStart);
+    window.addEventListener('mouseup', handleInputEnd);
+    canvas.addEventListener('touchstart', handleInputStart, { passive: false });
+    window.addEventListener('touchend', handleInputEnd);
+
+    // --- GAME RESET ---
+    function resetGame() {
+      cameraX = 0;
+      player.reset();
+      generateLevel();
+    }
+
+    // --- UPDATE LOOP ---
+    function update() {
+      if (gameState !== 'PLAYING') return;
+
+      // 1. Move Camera / Level forward
+      cameraX += GAME_SPEED;
+
+      // 2. Handle Jump Input
+      if (isInputDown && player.isGrounded) {
+        player.vy = JUMP_FORCE;
+        player.isGrounded = false;
+      }
+
+      // 3. Apply Gravity
+      player.vy += GRAVITY;
+      player.y += player.vy;
+
+      // 4. Handle Rotation Physics
+      if (!player.isGrounded) {
+        player.rotation += 8; // Rotate while in air
+      } else {
+        // Snap to nearest 90 degrees when grounded
+        player.rotation = Math.round(player.rotation / 90) * 90;
+      }
+
+      // 5. Floor Collision
+      if (player.y >= FLOOR_Y - player.size) {
+        player.y = FLOOR_Y - player.size;
+        player.vy = 0;
+        player.isGrounded = true;
+      }
+
+      // 6. Obstacle Collisions & Platform Landing
+      const playerWorldX = player.x + cameraX;
+      
+      let landedOnBlock = false;
+
+      for (let obs of obstacles) {
+        // AABB Collision Box
+        const pLeft = playerWorldX;
+        const pRight = playerWorldX + player.size;
+        const pTop = player.y;
+        const pBottom = player.y + player.size;
+
+        const oLeft = obs.x;
+        const oRight = obs.x + obs.w;
+        const oTop = obs.y;
+        const oBottom = obs.y + obs.h;
+
+        // Check bounding box overlap
+        if (pRight > oLeft && pLeft < oRight && pBottom > oTop && pTop < oBottom) {
+          if (obs.type === 'spike') {
+            triggerGameOver();
+            return;
+          } else if (obs.type === 'block') {
+            // Check if player landed on TOP of the block
+            const prevBottom = pBottom - player.vy;
+            if (prevBottom <= oTop + 8) {
+              player.y = oTop - player.size;
+              player.vy = 0;
+              player.isGrounded = true;
+              landedOnBlock = true;
+            } else {
+              // Collided into side/bottom of block
+              triggerGameOver();
+              return;
+            }
+          }
+        }
+      }
+
+      // Check level completion
+      if (cameraX >= levelLength) {
+        gameState = 'VICTORY';
+      }
+    }
+
+    function triggerGameOver() {
+      gameState = 'GAMEOVER';
+    }
+
+    // --- DRAW LOOP ---
+    function draw() {
+      // Clear Canvas
+      ctx.fillStyle = '#0f0f1f';
+      ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+      // Background Grid Lines
+      ctx.strokeStyle = '#1a1a3a';
+      ctx.lineWidth = 1;
+      const gridOffset = (cameraX * 0.5) % 40;
+      for (let x = -gridOffset; x < CANVAS_WIDTH; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, CANVAS_HEIGHT);
+        ctx.stroke();
+      }
+
+      // Draw Floor
+      ctx.fillStyle = '#080811';
+      ctx.fillRect(0, FLOOR_Y, CANVAS_WIDTH, CANVAS_HEIGHT - FLOOR_Y);
+      ctx.strokeStyle = '#00f0ff';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, FLOOR_Y);
+      ctx.lineTo(CANVAS_WIDTH, FLOOR_Y);
+      ctx.stroke();
+
+      // Draw Obstacles
+      obstacles.forEach(obs => {
+        const screenX = obs.x - cameraX;
+
+        // Only render if visible on screen
+        if (screenX + obs.w > 0 && screenX < CANVAS_WIDTH) {
+          if (obs.type === 'spike') {
+            ctx.fillStyle = '#ff0055';
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            
+            ctx.beginPath();
+            ctx.moveTo(screenX, obs.y + obs.h);
+            ctx.lineTo(screenX + obs.w / 2, obs.y);
+            ctx.lineTo(screenX + obs.w, obs.y + obs.h);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+          } else if (obs.type === 'block') {
+            ctx.fillStyle = '#00f0ff';
+            ctx.fillRect(screenX, obs.y, obs.w, obs.h);
+            
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(screenX, obs.y, obs.w, obs.h);
+            
+            // Inner decorative square
+            ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+            ctx.strokeRect(screenX + 8, obs.y + 8, obs.w - 16, obs.h - 16);
+          }
+        }
+      });
+
+      // Draw Player (Cube)
+      if (gameState !== 'GAMEOVER') {
+        ctx.save();
+        ctx.translate(player.x + player.size / 2, player.y + player.size / 2);
+        ctx.rotate((player.rotation * Math.PI) / 180);
+
+        // Main Icon Body
+        ctx.fillStyle = '#ffe600';
+        ctx.fillRect(-player.size / 2, -player.size / 2, player.size, player.size);
+
+        // Icon Border
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(-player.size / 2, -player.size / 2, player.size, player.size);
+
+        // Inner Face Details
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(-player.size / 4, -player.size / 4, 6, 6); // Left Eye
+        ctx.fillRect(player.size / 4 - 6, -player.size / 4, 6, 6); // Right Eye
+        ctx.fillRect(-player.size / 4, player.size / 6, player.size / 2, 4); // Mouth
+
+        ctx.restore();
+      }
+
+      // UI Overlay (Progress & Attempts)
+      const progress = Math.min(Math.floor((cameraX / levelLength) * 100), 100);
+      
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 16px Arial';
+      ctx.fillText(`Progress: ${progress}%`, 20, 30);
+      ctx.fillText(`Attempt ${attemptCount}`, CANVAS_WIDTH - 120, 30);
+
+      // Screens
+      if (gameState === 'START') {
+        drawOverlay('GEOMETRY DASH', 'Press SPACE or Click to Start');
+      } else if (gameState === 'GAMEOVER') {
+        drawOverlay('GAME OVER!', 'Press SPACE to Try Again');
+      } else if (gameState === 'VICTORY') {
+        drawOverlay('LEVEL COMPLETE!', 'Press SPACE to Play Again');
+      }
+    }
+
+    function drawOverlay(title, subtitle) {
+      ctx.fillStyle = 'rgba(10, 10, 18, 0.75)';
+      ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+      ctx.fillStyle = '#00f0ff';
+      ctx.font = 'bold 36px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(title, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 20);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '18px Arial';
+      ctx.fillText(subtitle, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 25);
+      ctx.textAlign = 'left'; // Reset
+    }
+
+    // --- MAIN GAME LOOP ---
+    function loop() {
+      update();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    // Initialize Level & Start Game Loop
+    resetGame();
+    loop();
+  </script>
+</body>
+</html>
