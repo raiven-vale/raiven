@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VOID//STACK</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #050508;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* Background grid */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+
+    background-size: 40px 40px;
+
+    pointer-events: none;
+}
+
+/* Central glow */
+body::after {
+    content: "";
+    position: fixed;
+
+    width: 700px;
+    height: 700px;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    background: radial-gradient(
+        circle,
+        rgba(255,0,255,0.08),
+        transparent 65%
+    );
+
+    pointer-events: none;
+}
+
+/* =========================
+   GAME
+========================= */
+
+#game {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* =========================
+   TOP BAR
+========================= */
+
+#topbar {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 80px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0 30px;
+
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+
+    background: rgba(5,5,8,0.85);
+
+    z-index: 10;
+}
+
+#title {
+    font-size: 24px;
+    font-weight: bold;
+
+    letter-spacing: 4px;
+}
+
+#stats {
+    display: flex;
+    gap: 30px;
+
+    font-size: 14px;
+    letter-spacing: 2px;
+}
+
+.stat span {
+    color: #ff00ff;
+}
+
+/* =========================
+   GAME AREA
+========================= */
+
+#arena {
+    position: absolute;
+
+    top: 80px;
+    bottom: 70px;
+
+    left: 0;
+    right: 0;
+
+    overflow: hidden;
+}
+
+/* =========================
+   STACK
+========================= */
+
+#stack {
+    position: absolute;
+
+    bottom: 0;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: 320px;
+    height: 100%;
+
+    pointer-events: none;
+}
+
+/* Blocks */
+
+.block {
+    position: absolute;
+
+    height: 28px;
+
+    border: 1px solid #ff00ff;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255,0,255,0.15),
+            rgba(255,0,255,0.45),
+            rgba(255,0,255,0.15)
+        );
+
+    box-shadow:
+        0 0 8px rgba(255,0,255,0.6),
+        inset 0 0 10px rgba(255,0,255,0.15);
+
+    transition: box-shadow 0.15s;
+}
+
+/* Current moving block */
+
+#currentBlock {
+    position: absolute;
+
+    height: 28px;
+
+    border: 1px solid #00ffff;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,255,255,0.15),
+            rgba(0,255,255,0.5),
+            rgba(0,255,255,0.15)
+        );
+
+    box-shadow:
+        0 0 10px #00ffff,
+        0 0 25px rgba(0,255,255,0.5);
+
+    z-index: 5;
+}
+
+/* =========================
+   START SCREEN
+========================= */
+
+#message {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    background: rgba(5,5,8,0.9);
+
+    z-index: 20;
+}
+
+#message h1 {
+    margin: 0 0 10px;
+
+    font-size: 48px;
+
+    letter-spacing: 8px;
+
+    text-shadow:
+        0 0 10px #ff00ff,
+        0 0 30px rgba(255,0,255,0.5);
+}
+
+#message p {
+    color: #aaa;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 30px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+button {
+    padding: 13px 28px;
+
+    border: 1px solid #ff00ff;
+
+    background: transparent;
+
+    color: #ff00ff;
+
+    font-size: 14px;
+
+    letter-spacing: 3px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #ff00ff;
+
+    color: #050508;
+
+    box-shadow:
+        0 0 15px #ff00ff,
+        0 0 30px rgba(255,0,255,0.5);
+}
+
+/* =========================
+   BOTTOM BAR
+========================= */
+
+#bottom {
+    position: absolute;
+
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+    height: 70px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-top: 1px solid rgba(255,255,255,0.12);
+
+    z-index: 10;
+}
+
+.back {
+    position: absolute;
+    left: 25px;
+}
+
+#instructions {
+    color: #666;
+
+    font-size: 12px;
+
+    letter-spacing: 2px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    #topbar {
+        padding: 0 15px;
+    }
+
+    #title {
+        font-size: 17px;
+        letter-spacing: 2px;
+    }
+
+    #stats {
+        gap: 10px;
+        font-size: 10px;
+    }
+
+    #message h1 {
+        font-size: 30px;
+        letter-spacing: 5px;
+    }
+
+    #stack {
+        width: 280px;
+    }
+
+    #instructions {
+        display: none;
+    }
+
+    .back {
+        left: 15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="game">
+
+    <!-- TOP BAR -->
+
+    <div id="topbar">
+
+        <div id="title">
+            VOID//STACK
+        </div>
+
+        <div id="stats">
+
+            <div class="stat">
+                LEVEL <span id="level">0</span>
+            </div>
+
+            <div class="stat">
+                BEST <span id="best">0</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- GAME ARENA -->
+
+    <div id="arena">
+
+        <div id="stack"></div>
+
+        <div id="currentBlock"></div>
+
+    </div>
+
+
+    <!-- MESSAGE -->
+
+    <div id="message">
+
+        <h1>VOID//STACK</h1>
+
+        <p id="messageText">
+            STACK THE BLOCKS AS ACCURATELY AS POSSIBLE
+        </p>
+
+        <button onclick="startGame()">
+            START
+        </button>
+
+    </div>
+
+
+    <!-- BOTTOM -->
+
+    <div id="bottom">
+
+        <button
+            class="back"
+            onclick="location.href='../index.html'">
+            ← ARCADE
+        </button>
+
+        <div id="instructions">
+            CLICK OR PRESS SPACE TO DROP
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   VARIABLES
+========================= */
+
+const arena = document.getElementById("arena");
+const stack = document.getElementById("stack");
+const currentBlock = document.getElementById("currentBlock");
+
+const levelDisplay = document.getElementById("level");
+const bestDisplay = document.getElementById("best");
+
+const message = document.getElementById("message");
+const messageText = document.getElementById("messageText");
+
+let level = 0;
+
+let blockWidth = 180;
+
+let blockHeight = 28;
+
+let currentX = 0;
+
+let direction = 1;
+
+let speed = 3;
+
+let moving = false;
+
+let animation;
+
+
+/* =========================
+   BEST SCORE
+========================= */
+
+let best = localStorage.getItem("voidStackBest") || 0;
+
+bestDisplay.textContent = best;
+
+
+/* =========================
+   START GAME
+========================= */
+
+function startGame() {
+
+    level = 0;
+
+    blockWidth = 180;
+
+    speed = 3;
+
+    direction = 1;
+
+    moving = true;
+
+    levelDisplay.textContent = level;
+
+    stack.innerHTML = "";
+
+    message.style.display = "none";
+
+    createBlock();
+
+    moveBlock();
+
+}
+
+
+/* =========================
+   CREATE BLOCK
+========================= */
+
+function createBlock() {
+
+    currentBlock.style.width = blockWidth + "px";
+
+    currentX = 0;
+
+    currentBlock.style.left = currentX + "px";
+
+    currentBlock.style.bottom =
+        (level * blockHeight) + "px";
+
+    moving = true;
+}
+
+
+/* =========================
+   MOVE BLOCK
+========================= */
+
+function moveBlock() {
+
+    cancelAnimationFrame(animation);
+
+    function animate() {
+
+        if (!moving) return;
+
+        currentX += speed * direction;
+
+        const maxX =
+            stack.clientWidth - blockWidth;
+
+        /*
+           Bounce off the sides
+        */
+
+        if (currentX >= maxX) {
+
+            currentX = maxX;
+
+            direction = -1;
+        }
+
+        if (currentX <= 0) {
+
+            currentX = 0;
+
+            direction = 1;
+        }
+
+        currentBlock.style.left =
+            currentX + "px";
+
+        animation =
+            requestAnimationFrame(animate);
+    }
+
+    animate();
+}
+
+
+/* =========================
+   DROP BLOCK
+========================= */
+
+function dropBlock() {
+
+    if (!moving) return;
+
+    moving = false;
+
+    cancelAnimationFrame(animation);
+
+    /*
+       First block always succeeds
+    */
+
+    if (level === 0) {
+
+        addBlock(currentX);
+
+        level++;
+
+        levelDisplay.textContent = level;
+
+        speed += 0.25;
+
+        createBlock();
+
+        moveBlock();
+
+        return;
+    }
+
+
+    /*
+       Get previous block
+    */
+
+    const previous =
+        stack.lastElementChild;
+
+    const previousLeft =
+        parseFloat(previous.style.left);
+
+    const previousWidth =
+        parseFloat(previous.style.width);
+
+
+    /*
+       Calculate overlap
+    */
+
+    const currentLeft = currentX;
+
+    const currentRight =
+        currentX + blockWidth;
+
+    const previousRight =
+        previousLeft + previousWidth;
+
+    const overlapLeft =
+        Math.max(currentLeft, previousLeft);
+
+    const overlapRight =
+        Math.min(currentRight, previousRight);
+
+    const overlap =
+        overlapRight - overlapLeft;
+
+
+    /*
+       No overlap = GAME OVER
+    */
+
+    if (overlap <= 0) {
+
+        gameOver();
+
+        return;
+    }
+
+
+    /*
+       The new block becomes
+       only the overlapping section.
+    */
+
+    blockWidth = overlap;
+
+    currentX = overlapLeft;
+
+    addBlock(currentX);
+
+
+    /*
+       Increase difficulty
+    */
+
+    level++;
+
+    levelDisplay.textContent = level;
+
+    speed += 0.25;
+
+
+    /*
+       New block
+    */
+
+    createBlock();
+
+    moveBlock();
+}
+
+
+/* =========================
+   ADD BLOCK
+========================= */
+
+function addBlock(x) {
+
+    const block =
+        document.createElement("div");
+
+    block.className = "block";
+
+    block.style.width =
+        blockWidth + "px";
+
+    block.style.left =
+        x + "px";
+
+    block.style.bottom =
+        (level * blockHeight) + "px";
+
+    stack.appendChild(block);
+}
+
+
+/* =========================
+   GAME OVER
+========================= */
+
+function gameOver() {
+
+    moving = false;
+
+    cancelAnimationFrame(animation);
+
+    /*
+       Update best
+    */
+
+    if (level > best) {
+
+        best = level;
+
+        localStorage.setItem(
+            "voidStackBest",
+            best
+        );
+
+        bestDisplay.textContent = best;
+    }
+
+
+    /*
+       Show message
+    */
+
+    messageText.innerHTML =
+        "STACK HEIGHT: <strong>" +
+        level +
+        "</strong>";
+
+    message.querySelector("button")
+        .textContent = "RETRY";
+
+    message.style.display = "flex";
+}
+
+
+/* =========================
+   CONTROLS
+========================= */
+
+/*
+   Click anywhere in the arena
+*/
+
+arena.addEventListener(
+    "click",
+    function(event) {
+
+        /*
+           Don't drop if clicking
+           the interface accidentally
+        */
+
+        if (event.target === arena ||
+            event.target === currentBlock) {
+
+            dropBlock();
+        }
+    }
+);
+
+
+/*
+   SPACEBAR
+*/
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.code === "Space") {
+
+            event.preventDefault();
+
+            dropBlock();
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
