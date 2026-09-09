@@ -1,202 +1,623 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
+    <title>RAIVEN // SYSTEM</title>
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<title>RAIVEN // ARCADE</title>
+        html {
+            scroll-behavior: smooth;
+        }
 
-<link rel="stylesheet" href="style.css">
+        body {
+            background: #050505;
+            color: #e8e8e8;
+            font-family: "Courier New", Courier, monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
+        /* =========================
+           BACKGROUND
+        ========================= */
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background:
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(
+                circle at center,
+                transparent 25%,
+                rgba(0,0,0,0.65) 100%
+            );
+            z-index: -1;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            width: 100%;
+            padding: 28px 7vw 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1b1b1b;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 7px;
+            color: #ffffff;
+        }
+
+        .status {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #777;
+        }
+
+        .status span {
+            color: #8cff8c;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            padding: 90px 7vw 65px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .system-label {
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: clamp(48px, 9vw, 110px);
+            line-height: 0.9;
+            letter-spacing: -5px;
+            font-weight: 900;
+            color: #f2f2f2;
+        }
+
+        .hero h1 span {
+            color: #555;
+        }
+
+        .hero-description {
+            max-width: 580px;
+            margin-top: 30px;
+            color: #777;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .terminal-line {
+            margin-top: 35px;
+            color: #777;
+            font-size: 12px;
+        }
+
+        .terminal-line::before {
+            content: "> ";
+            color: #aaa;
+        }
+
+        /* =========================
+           PROGRAMS
+        ========================= */
+
+        .programs {
+            width: 86%;
+            max-width: 1200px;
+            margin: auto;
+            padding-bottom: 100px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #222;
+            padding-bottom: 14px;
+            margin-bottom: 22px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: #666;
+        }
+
+        .program-count {
+            font-size: 10px;
+            color: #444;
+            letter-spacing: 2px;
+        }
+
+        .game-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        /* =========================
+           GAME CARD
+        ========================= */
+
+        .game-card {
+            position: relative;
+            min-height: 230px;
+            padding: 28px;
+            border: 1px solid #1d1d1d;
+            background: rgba(10, 10, 10, 0.8);
+            transition:
+                transform 0.25s ease,
+                border-color 0.25s ease,
+                background 0.25s ease;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: width 0.3s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-4px);
+            border-color: #444;
+            background: #0d0d0d;
+        }
+
+        .game-card:hover::before {
+            width: 100%;
+        }
+
+        .game-number {
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: #555;
+            margin-bottom: 32px;
+        }
+
+        .game-name {
+            font-size: clamp(24px, 3vw, 36px);
+            font-weight: bold;
+            letter-spacing: -1px;
+            color: #eee;
+            margin-bottom: 12px;
+        }
+
+        .game-description {
+            font-size: 11px;
+            line-height: 1.7;
+            color: #666;
+            max-width: 400px;
+        }
+
+        .game-footer {
+            position: absolute;
+            bottom: 24px;
+            left: 28px;
+            right: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .game-status {
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: #444;
+        }
+
+        .play-button {
+            display: inline-block;
+            padding: 9px 15px;
+            border: 1px solid #333;
+            color: #aaa;
+            text-decoration: none;
+            font-size: 10px;
+            letter-spacing: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .play-button:hover {
+            background: #eee;
+            color: #050505;
+            border-color: #eee;
+        }
+
+        /* =========================
+           GEOMETRY DASH SPECIAL
+        ========================= */
+
+        .geometry-card {
+            grid-column: span 2;
+            min-height: 260px;
+        }
+
+        .geometry-card .game-name {
+            font-size: clamp(30px, 4vw, 48px);
+        }
+
+        .geometry-card .game-number {
+            color: #777;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            border-top: 1px solid #1b1b1b;
+            padding: 25px 7vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #444;
+            font-size: 9px;
+            letter-spacing: 2px;
+        }
+
+        .footer-right {
+            text-align: right;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            header {
+                padding: 22px 6vw;
+            }
+
+            .logo {
+                font-size: 17px;
+                letter-spacing: 5px;
+            }
+
+            .status {
+                font-size: 8px;
+            }
+
+            .hero {
+                padding: 70px 6vw 55px;
+            }
+
+            .hero h1 {
+                font-size: 58px;
+                letter-spacing: -3px;
+            }
+
+            .game-list {
+                grid-template-columns: 1fr;
+            }
+
+            .geometry-card {
+                grid-column: span 1;
+            }
+
+            .game-card {
+                min-height: 220px;
+            }
+
+            footer {
+                padding: 22px 6vw;
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .footer-right {
+                text-align: left;
+            }
+        }
+    </style>
 </head>
-
 
 <body>
 
+    <!-- =========================
+         HEADER
+    ========================= -->
 
-<!-- TITLE SCREEN -->
+    <header>
+        <div class="logo">RAIVEN</div>
 
-<div id="titleScreen" class="screen">
+        <div class="status">
+            SYSTEM STATUS // <span>ONLINE</span>
+        </div>
+    </header>
 
-    <div style="text-align:center">
 
-        <div class="logo">
-            RAIVEN
+    <!-- =========================
+         HERO
+    ========================= -->
+
+    <section class="hero">
+
+        <div class="system-label">
+            RAIVEN DIGITAL ARCHIVE // 001
         </div>
 
-        <div class="subtitle">
-            DIGITAL ARCADE
-        </div>
+        <h1>
+            VOID<span>//</span>RUN
+        </h1>
 
-        <br><br>
-
-        <button onclick="openMenu()">
-            ENTER
-        </button>
-
-    </div>
-
-</div>
-
-
-<!-- ARCADE MENU -->
-
-<div id="menu" class="screen hidden">
-
-    <div class="menu-header">
-
-        <h1>ARCADE</h1>
-
-        <p>
-            SELECT A PROGRAM
+        <p class="hero-description">
+            A collection of experimental programs, games and digital
+            experiments built inside the RAIVEN system.
         </p>
 
-    </div>
+        <div class="terminal-line">
+            SELECT A PROGRAM TO INITIALIZE
+        </div>
+
+    </section>
 
 
-    <div class="games">
+    <!-- =========================
+         GAME LIST
+         
+         TO ADD ANOTHER GAME:
+         Copy one .game-card and
+         change its information.
+    ========================= -->
 
+    <main class="programs">
 
-        <!-- GAME 01 -->
+        <div class="section-header">
 
-        <div class="game-card">
-
-            <div class="game-number">
-                PROGRAM 01
+            <div class="section-title">
+                AVAILABLE PROGRAMS
             </div>
 
-            <h2>
-                VOID//RUN
-            </h2>
-
-            <p>
-                Dodge the incoming obstacles.
-                Survive as long as possible.
-            </p>
-
-            <button
-            onclick="location.href='games/void-run.html'">
-
-                PLAY
-
-            </button>
+            <div class="program-count">
+                05 PROGRAMS ONLINE
+            </div>
 
         </div>
 
 
-        <!-- GAME 02 -->
+        <div class="game-list">
 
-        <div class="game-card">
 
-            <div class="game-number">
-                PROGRAM 02
+            <!-- PROGRAM 01 -->
+
+            <div class="game-card">
+
+                <div class="game-number">
+                    PROGRAM 01
+                </div>
+
+                <div class="game-name">
+                    VOID//RUN
+                </div>
+
+                <div class="game-description">
+                    Enter the void. Survive the run.
+                    A simple experimental challenge.
+                </div>
+
+                <div class="game-footer">
+
+                    <div class="game-status">
+                        STATUS // ONLINE
+                    </div>
+
+                    <a
+                        class="play-button"
+                        href="games/void-run/"
+                    >
+                        PLAY →
+                    </a>
+
+                </div>
+
             </div>
 
-            <h2>
-                ZERO//TRACE
-            </h2>
 
-            <p>
-                Memorize the sequence.
-                How far can your memory go?
-            </p>
+            <!-- PROGRAM 02 -->
 
-            <button
-            onclick="location.href='games/zero-trace.html'">
+            <div class="game-card">
 
-                PLAY
+                <div class="game-number">
+                    PROGRAM 02
+                </div>
 
-            </button>
+                <div class="game-name">
+                    ZERO//TRACE
+                </div>
+
+                <div class="game-description">
+                    Find the pattern. Follow the trace.
+                    Speed and precision determine survival.
+                </div>
+
+                <div class="game-footer">
+
+                    <div class="game-status">
+                        STATUS // ONLINE
+                    </div>
+
+                    <a
+                        class="play-button"
+                        href="games/zero-trace/"
+                    >
+                        PLAY →
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROGRAM 03 -->
+
+            <div class="game-card">
+
+                <div class="game-number">
+                    PROGRAM 03
+                </div>
+
+                <div class="game-name">
+                    VOID//CLICK
+                </div>
+
+                <div class="game-description">
+                    React faster. Click faster.
+                    Test your reaction speed against the system.
+                </div>
+
+                <div class="game-footer">
+
+                    <div class="game-status">
+                        STATUS // ONLINE
+                    </div>
+
+                    <a
+                        class="play-button"
+                        href="games/void-click/"
+                    >
+                        PLAY →
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROGRAM 04 -->
+
+            <div class="game-card">
+
+                <div class="game-number">
+                    PROGRAM 04
+                </div>
+
+                <div class="game-name">
+                    VOID//STACK
+                </div>
+
+                <div class="game-description">
+                    Build the stack. Maintain the balance.
+                    One mistake can bring everything down.
+                </div>
+
+                <div class="game-footer">
+
+                    <div class="game-status">
+                        STATUS // ONLINE
+                    </div>
+
+                    <a
+                        class="play-button"
+                        href="games/void-stack/"
+                    >
+                        PLAY →
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROGRAM 05 -->
+
+            <div class="game-card geometry-card">
+
+                <div class="game-number">
+                    PROGRAM 05 // NEW
+                </div>
+
+                <div class="game-name">
+                    GEOMETRY//DASH
+                </div>
+
+                <div class="game-description">
+                    Navigate the levels. Defy gravity.
+                    Time your movements, survive the obstacles
+                    and push your run as far as possible.
+                </div>
+
+                <div class="game-footer">
+
+                    <div class="game-status">
+                        STATUS // ONLINE
+                    </div>
+
+                    <a
+                        class="play-button"
+                        href="games/geometry-dash/"
+                    >
+                        PLAY →
+                    </a>
+
+                </div>
+
+            </div>
+
 
         </div>
 
+    </main>
 
-        <!-- GAME 03 -->
 
-        <div class="game-card">
+    <!-- =========================
+         FOOTER
+    ========================= -->
 
-            <div class="game-number">
-                PROGRAM 03
-            </div>
+    <footer>
 
-            <h2>
-                VOID//CLICK
-            </h2>
-
-            <p>
-                Hit the targets before time runs out.
-            </p>
-
-            <button
-            onclick="location.href='games/void-click.html'">
-
-                PLAY
-
-            </button>
-
+        <div>
+            RAIVEN SYSTEM // 5 PROGRAMS ONLINE
         </div>
 
-
-        <!-- GAME 04 -->
-
-        <div class="game-card">
-
-            <div class="game-number">
-                PROGRAM 04
-            </div>
-
-            <h2>
-                VOID//STACK
-            </h2>
-
-            <p>
-                Stack the blocks as accurately as possible.
-            </p>
-
-            <button
-            onclick="location.href='games/void-stack.html'">
-
-                PLAY
-
-            </button>
-
+        <div class="footer-right">
+            VOID//RUN<br>
+            BUILD 2026
         </div>
 
-
-    </div>
-
-
-    <div class="menu-footer">
-
-        RAIVEN SYSTEM //
-        4 PROGRAMS ONLINE
-
-    </div>
-
-</div>
-
-
-<script>
-
-function openMenu() {
-
-    document
-        .getElementById("titleScreen")
-        .classList.add("hidden");
-
-    document
-        .getElementById("menu")
-        .classList.remove("hidden");
-
-}
-
-</script>
+    </footer>
 
 
 </body>
-
 </html>
