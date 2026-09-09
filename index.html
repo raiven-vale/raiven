@@ -1,11 +1,405 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Raiven</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>RAIVEN // VOID RUN</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background: #050508;
+        color: #e8e8ff;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+    }
+
+    /* Background grid */
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+            linear-gradient(rgba(130, 80, 255, 0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(130, 80, 255, 0.06) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+    }
+
+    #landing {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        position: relative;
+    }
+
+    h1 {
+        font-size: clamp(4rem, 12vw, 9rem);
+        letter-spacing: 18px;
+        text-shadow:
+            0 0 10px #7b4dff,
+            0 0 30px #7b4dff,
+            0 0 70px #5127c9;
+        animation: flicker 4s infinite;
+    }
+
+    .subtitle {
+        margin-top: 15px;
+        letter-spacing: 6px;
+        color: #9d8cff;
+        font-size: 0.8rem;
+    }
+
+    .line {
+        width: 250px;
+        height: 1px;
+        background: #7b4dff;
+        margin: 30px;
+        box-shadow: 0 0 15px #7b4dff;
+    }
+
+    button {
+        background: transparent;
+        color: #e8e8ff;
+        border: 1px solid #7b4dff;
+        padding: 14px 35px;
+        letter-spacing: 4px;
+        cursor: pointer;
+        transition: 0.3s;
+        font-weight: bold;
+    }
+
+    button:hover {
+        background: #7b4dff;
+        box-shadow: 0 0 30px #7b4dff;
+        transform: scale(1.05);
+    }
+
+    .status {
+        position: absolute;
+        bottom: 30px;
+        font-size: 0.7rem;
+        letter-spacing: 3px;
+        color: #777;
+    }
+
+    .status span {
+        color: #7bffae;
+    }
+
+    #gameScreen {
+        display: none;
+        height: 100vh;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .topbar {
+        width: min(900px, 90vw);
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 0.8rem;
+        letter-spacing: 3px;
+        color: #9d8cff;
+    }
+
+    #game {
+        width: min(900px, 90vw);
+        height: min(500px, 70vh);
+        border: 1px solid #7b4dff;
+        background: #08080f;
+        position: relative;
+        overflow: hidden;
+        box-shadow:
+            0 0 20px rgba(123, 77, 255, 0.4),
+            inset 0 0 40px rgba(123, 77, 255, 0.05);
+    }
+
+    #player {
+        width: 25px;
+        height: 25px;
+        background: #b8a5ff;
+        position: absolute;
+        left: 70px;
+        top: 50%;
+        transform: translateY(-50%) rotate(45deg);
+        box-shadow:
+            0 0 10px #b8a5ff,
+            0 0 25px #7b4dff;
+    }
+
+    .obstacle {
+        position: absolute;
+        background: #ff4d7d;
+        box-shadow:
+            0 0 15px #ff4d7d,
+            0 0 30px #ff4d7d;
+    }
+
+    #message {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(5, 5, 8, 0.85);
+        z-index: 10;
+        text-align: center;
+    }
+
+    #message h2 {
+        font-size: 2rem;
+        letter-spacing: 7px;
+        margin-bottom: 20px;
+        color: #ff4d7d;
+        text-shadow: 0 0 20px #ff4d7d;
+    }
+
+    #message p {
+        margin-bottom: 25px;
+        color: #aaa;
+        letter-spacing: 2px;
+    }
+
+    .controls {
+        margin-top: 15px;
+        color: #666;
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+        text-align: center;
+    }
+
+    @keyframes flicker {
+        0%, 18%, 22%, 25%, 53%, 57%, 100% {
+            opacity: 1;
+        }
+
+        20%, 24%, 55% {
+            opacity: 0.65;
+        }
+    }
+</style>
 </head>
 
 <body>
-    <h1>Hello</h1>
-    <p>You have found the land of nowhere...</p>
+
+<!-- LANDING SCREEN -->
+<div id="landing">
+    <h1>RAIVEN</h1>
+
+    <div class="subtitle">DIGITAL VOID</div>
+
+    <div class="line"></div>
+
+    <button onclick="enterGame()">ENTER</button>
+
+    <div class="status">
+        SYSTEM STATUS: <span>ONLINE</span>
+    </div>
+</div>
+
+
+<!-- GAME SCREEN -->
+<div id="gameScreen">
+
+    <div class="topbar">
+        <div>RAIVEN // VOID RUN</div>
+        <div>SCORE: <span id="score">0</span></div>
+    </div>
+
+    <div id="game">
+
+        <div id="player"></div>
+
+        <div id="message">
+            <h2>VOID//RUN</h2>
+            <p>ARROW KEYS OR WASD TO MOVE</p>
+            <button onclick="startGame()">START</button>
+        </div>
+
+    </div>
+
+    <div class="controls">
+        SURVIVE THE VOID
+    </div>
+
+</div>
+
+
+<script>
+
+const landing = document.getElementById("landing");
+const gameScreen = document.getElementById("gameScreen");
+const game = document.getElementById("game");
+const player = document.getElementById("player");
+const scoreDisplay = document.getElementById("score");
+const message = document.getElementById("message");
+
+let playerX = 70;
+let playerY = 200;
+
+let keys = {};
+let obstacles = [];
+
+let gameRunning = false;
+let score = 0;
+let speed = 4;
+
+document.addEventListener("keydown", (e) => {
+    keys[e.key.toLowerCase()] = true;
+});
+
+document.addEventListener("keyup", (e) => {
+    keys[e.key.toLowerCase()] = false;
+});
+
+
+function enterGame() {
+    landing.style.display = "none";
+    gameScreen.style.display = "flex";
+}
+
+
+function startGame() {
+
+    obstacles.forEach(o => o.remove());
+
+    obstacles = [];
+
+    score = 0;
+    speed = 4;
+
+    scoreDisplay.textContent = score;
+
+    playerX = 70;
+    playerY = game.clientHeight / 2;
+
+    player.style.left = playerX + "px";
+    player.style.top = playerY + "px";
+
+    message.style.display = "none";
+
+    gameRunning = true;
+
+    gameLoop();
+
+    spawnObstacle();
+}
+
+
+function gameLoop() {
+
+    if (!gameRunning) return;
+
+    let moveSpeed = 6;
+
+    if (keys["arrowup"] || keys["w"]) playerY -= moveSpeed;
+    if (keys["arrowdown"] || keys["s"]) playerY += moveSpeed;
+    if (keys["arrowleft"] || keys["a"]) playerX -= moveSpeed;
+    if (keys["arrowright"] || keys["d"]) playerX += moveSpeed;
+
+    playerX = Math.max(0, Math.min(game.clientWidth - 25, playerX));
+    playerY = Math.max(0, Math.min(game.clientHeight - 25, playerY));
+
+    player.style.left = playerX + "px";
+    player.style.top = playerY + "px";
+
+
+    obstacles.forEach((obstacle, index) => {
+
+        let x = parseFloat(obstacle.style.left);
+
+        x -= speed;
+
+        obstacle.style.left = x + "px";
+
+
+        let p = player.getBoundingClientRect();
+        let o = obstacle.getBoundingClientRect();
+
+        if (
+            p.left < o.right &&
+            p.right > o.left &&
+            p.top < o.bottom &&
+            p.bottom > o.top
+        ) {
+            gameOver();
+        }
+
+
+        if (x < -60) {
+            obstacle.remove();
+            obstacles.splice(index, 1);
+
+            score += 10;
+
+            scoreDisplay.textContent = score;
+
+            speed += 0.08;
+        }
+
+    });
+
+
+    requestAnimationFrame(gameLoop);
+}
+
+
+function spawnObstacle() {
+
+    if (!gameRunning) return;
+
+    const obstacle = document.createElement("div");
+
+    obstacle.classList.add("obstacle");
+
+    const size = Math.random() * 35 + 20;
+
+    obstacle.style.width = size + "px";
+    obstacle.style.height = size + "px";
+
+    obstacle.style.left = game.clientWidth + "px";
+
+    obstacle.style.top =
+        Math.random() * (game.clientHeight - size) + "px";
+
+    game.appendChild(obstacle);
+
+    obstacles.push(obstacle);
+
+
+    let spawnTime = Math.max(500, 1400 - score * 3);
+
+    setTimeout(spawnObstacle, spawnTime);
+}
+
+
+function gameOver() {
+
+    gameRunning = false;
+
+    message.innerHTML = `
+        <h2>CONNECTION LOST</h2>
+        <p>FINAL SCORE: ${score}</p>
+        <button onclick="startGame()">RETRY</button>
+    `;
+
+    message.style.display = "flex";
+}
+
+</script>
+
 </body>
 </html>
