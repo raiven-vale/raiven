@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0,
+                   maximum-scale=1.0, user-scalable=no">
+
+    <title>GEOMETRY DASH // RAIVEN</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div id="game">
+
+    <canvas id="canvas"></canvas>
+
+    <div id="hud">
+
+        <div class="hud-left">
+            <div class="game-title">GEOMETRY DASH</div>
+            <div id="levelName">LEVEL 01</div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div id="progress"></div>
+            </div>
+            <div id="progressText">0%</div>
+        </div>
+
+        <button id="pauseButton">Ⅱ</button>
+
+    </div>
+
+    <div id="menu" class="screen">
+
+        <div class="logo">
+            <span>GEOMETRY</span>
+            <strong>DASH</strong>
+        </div>
+
+        <div class="subtitle">
+            RAIVEN // PROGRAM 05
+        </div>
+
+        <button id="playButton" class="main-button">
+            PLAY
+        </button>
+
+        <button id="levelsButton" class="secondary-button">
+            LEVEL SELECT
+        </button>
+
+        <div class="controls">
+            SPACE / CLICK / TAP — JUMP
+        </div>
+
+    </div>
+
+    <div id="levelSelect" class="screen hidden">
+
+        <h1>LEVEL SELECT</h1>
+
+        <div id="levelGrid"></div>
+
+        <button id="backButton" class="secondary-button">
+            BACK
+        </button>
+
+    </div>
+
+    <div id="pauseScreen" class="screen hidden">
+
+        <h1>PAUSED</h1>
+
+        <button id="resumeButton" class="main-button">
+            RESUME
+        </button>
+
+        <button id="restartButton" class="secondary-button">
+            RESTART
+        </button>
+
+        <button id="pauseMenuButton" class="secondary-button">
+            MENU
+        </button>
+
+    </div>
+
+    <div id="deathScreen" class="screen hidden">
+
+        <div class="death-title">
+            CRASHED
+        </div>
+
+        <div id="deathProgress">
+            0%
+        </div>
+
+        <button id="tryAgainButton" class="main-button">
+            TRY AGAIN
+        </button>
+
+        <button id="deathMenuButton" class="secondary-button">
+            LEVEL SELECT
+        </button>
+
+    </div>
+
+    <div id="completeScreen" class="screen hidden">
+
+        <div class="complete-title">
+            LEVEL COMPLETE
+        </div>
+
+        <div id="completeName">
+            LEVEL 01
+        </div>
+
+        <button id="nextButton" class="main-button">
+            NEXT LEVEL
+        </button>
+
+        <button id="completeMenuButton" class="secondary-button">
+            LEVEL SELECT
+        </button>
+
+    </div>
+
+</div>
+
+<script src="levels.js"></script>
+<script src="game.js"></script>
+
+</body>
+</html>
