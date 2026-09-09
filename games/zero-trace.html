@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>ZERO//TRACE</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    background: #050508;
+
+    color: #e8e8ff;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    overflow: hidden;
+}
+
+
+/* BACKGROUND */
+
+body::before {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            rgba(120,70,255,.05) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(120,70,255,.05) 1px,
+            transparent 1px
+        );
+
+    background-size: 40px 40px;
+
+    pointer-events: none;
+}
+
+
+body::after {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(100,50,255,.08),
+            transparent 55%
+        );
+
+    pointer-events: none;
+}
+
+
+/* GAME SCREEN */
+
+#gameScreen {
+
+    width: 100vw;
+
+    height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+/* TOP BAR */
+
+.top {
+
+    width: min(700px,90vw);
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 10px;
+
+    color: #8e7cff;
+
+    font-size: .7rem;
+
+    letter-spacing: 3px;
+}
+
+
+/* GAME BOX */
+
+#game {
+
+    width: min(700px,90vw);
+
+    height: min(520px,70vh);
+
+    position: relative;
+
+    overflow: hidden;
+
+    border: 1px solid #7650ff;
+
+    background: #08080f;
+
+    box-shadow:
+        0 0 25px rgba(118,80,255,.2),
+        inset 0 0 50px rgba(118,80,255,.04);
+}
+
+
+/* INFORMATION */
+
+#info {
+
+    position: absolute;
+
+    top: 20px;
+
+    left: 0;
+
+    width: 100%;
+
+    text-align: center;
+
+    color: #777;
+
+    font-size: .7rem;
+
+    letter-spacing: 3px;
+
+    z-index: 2;
+}
+
+
+/* GRID */
+
+#grid {
+
+    position: absolute;
+
+    width: 300px;
+
+    height: 300px;
+
+    left: 50%;
+
+    top: 50%;
+
+    transform: translate(-50%,-45%);
+
+    display: grid;
+
+    grid-template-columns: repeat(3,1fr);
+
+    gap: 10px;
+}
+
+
+/* CELLS */
+
+.cell {
+
+    background: #0b0913;
+
+    border: 1px solid #302750;
+
+    cursor: pointer;
+
+    transition: .12s;
+
+}
+
+
+/* HOVER */
+
+.cell:hover {
+
+    border-color: #7650ff;
+
+    box-shadow:
+        0 0 10px rgba(118,80,255,.3);
+}
+
+
+/* ACTIVE */
+
+.cell.active {
+
+    background: #7650ff;
+
+    border-color: #b8a5ff;
+
+    box-shadow:
+        0 0 15px #7650ff,
+        0 0 35px #7650ff;
+
+}
+
+
+/* CORRECT */
+
+.cell.correct {
+
+    background: #55ff9a;
+
+    border-color: #55ff9a;
+
+    box-shadow:
+        0 0 15px #55ff9a,
+        0 0 30px #55ff9a;
+}
+
+
+/* WRONG */
+
+.cell.wrong {
+
+    background: #ff4d7d;
+
+    border-color: #ff4d7d;
+
+    box-shadow:
+        0 0 15px #ff4d7d,
+        0 0 30px #ff4d7d;
+}
+
+
+/* MESSAGE */
+
+#message {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 10;
+
+    background: rgba(5,5,8,.9);
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+}
+
+
+#message h1 {
+
+    font-size: 2rem;
+
+    letter-spacing: 7px;
+
+    color: #e8e8ff;
+
+    text-shadow:
+        0 0 10px #7650ff,
+        0 0 25px #7650ff;
+
+    margin-bottom: 15px;
+}
+
+
+#message p {
+
+    color: #777;
+
+    font-size: .7rem;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 25px;
+
+    max-width: 400px;
+
+    line-height: 1.8;
+}
+
+
+/* BUTTON */
+
+button {
+
+    background: transparent;
+
+    color: #e8e8ff;
+
+    border: 1px solid #7650ff;
+
+    padding: 11px 25px;
+
+    cursor: pointer;
+
+    letter-spacing: 3px;
+
+    font-weight: bold;
+
+    transition: .2s;
+}
+
+
+button:hover {
+
+    background: #7650ff;
+
+    box-shadow:
+        0 0 15px #7650ff,
+        0 0 35px rgba(118,80,255,.5);
+
+    transform: translateY(-2px);
+}
+
+
+/* BACK */
+
+.back {
+
+    margin-top: 15px;
+
+    border-color: #333;
+
+    font-size: .6rem;
+
+    padding: 8px 18px;
+}
+
+
+/* MOBILE */
+
+@media(max-width:600px) {
+
+    #grid {
+
+        width: 260px;
+
+        height: 260px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div id="gameScreen">
+
+
+    <!-- TOP BAR -->
+
+    <div class="top">
+
+        <span>
+            ZERO//TRACE
+        </span>
+
+        <span>
+            LEVEL:
+            <b id="level">1</b>
+        </span>
+
+    </div>
+
+
+    <!-- GAME -->
+
+    <div id="game">
+
+
+        <div id="info">
+            WAIT FOR THE SEQUENCE
+        </div>
+
+
+        <div id="grid"></div>
+
+
+        <!-- START / GAME OVER -->
+
+        <div id="message">
+
+            <h1>
+                ZERO//TRACE
+            </h1>
+
+            <p>
+                Memorize the glowing sequence,
+                then reproduce it.
+                Each level gets longer.
+            </p>
+
+            <button onclick="startGame()">
+                START
+            </button>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- BACK -->
+
+    <button
+        class="back"
+        onclick="location.href='../index.html'">
+
+        ← ARCADE
+
+    </button>
+
+
+</div>
+
+
+<script>
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+const grid =
+    document.getElementById("grid");
+
+const info =
+    document.getElementById("info");
+
+const levelDisplay =
+    document.getElementById("level");
+
+const message =
+    document.getElementById("message");
+
+
+let sequence = [];
+
+let playerSequence = [];
+
+let level = 1;
+
+let locked = true;
+
+let gameActive = false;
+
+
+/* =====================================================
+   CREATE GRID
+===================================================== */
+
+function createGrid() {
+
+    grid.innerHTML = "";
+
+
+    for (let i = 0; i < 9; i++) {
+
+        const cell =
+            document.createElement("div");
+
+
+        cell.className =
+            "cell";
+
+
+        cell.dataset.index =
+            i;
+
+
+        cell.addEventListener(
+            "click",
+            () => playerClick(i)
+        );
+
+
+        grid.appendChild(cell);
+
+    }
+
+}
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
+function startGame() {
+
+    createGrid();
+
+
+    level = 1;
+
+    levelDisplay.textContent =
+        level;
+
+
+    sequence = [];
+
+    playerSequence = [];
+
+
+    gameActive = true;
+
+    locked = true;
+
+
+    message.style.display =
+        "none";
+
+
+    nextLevel();
+
+}
+
+
+/* =====================================================
+   NEXT LEVEL
+===================================================== */
+
+function nextLevel() {
+
+    if (!gameActive)
+        return;
+
+
+    playerSequence = [];
+
+    locked = true;
+
+
+    levelDisplay.textContent =
+        level;
+
+
+    info.textContent =
+        "MEMORIZE";
+
+
+    /*
+       Add one new random cell
+       to the sequence.
+    */
+
+    sequence.push(
+        Math.floor(
+            Math.random() * 9
+        )
+    );
+
+
+    showSequence();
+
+}
+
+
+/* =====================================================
+   SHOW SEQUENCE
+===================================================== */
+
+async function showSequence() {
+
+    const cells =
+        document.querySelectorAll(".cell");
+
+
+    /*
+       Small pause before
+       sequence begins.
+    */
+
+    await wait(500);
+
+
+    for (
+        let i = 0;
+        i < sequence.length;
+        i++
+    ) {
+
+        const index =
+            sequence[i];
+
+
+        cells[index]
+            .classList.add("active");
+
+
+        await wait(450);
+
+
+        cells[index]
+            .classList.remove("active");
+
+
+        await wait(180);
+
+    }
+
+
+    locked = false;
+
+
+    info.textContent =
+        "REPEAT THE SEQUENCE";
+
+}
+
+
+/* =====================================================
+   PLAYER CLICK
+===================================================== */
+
+function playerClick(index) {
+
+    if (locked)
+        return;
+
+
+    if (!gameActive)
+        return;
+
+
+    const cells =
+        document.querySelectorAll(".cell");
+
+
+    /*
+       Show temporary click effect.
+    */
+
+    cells[index]
+        .classList.add("correct");
+
+
+    setTimeout(() => {
+
+        cells[index]
+            .classList.remove("correct");
+
+    }, 120);
+
+
+    const position =
+        playerSequence.length;
+
+
+    playerSequence.push(index);
+
+
+    /*
+       WRONG CELL
+    */
+
+    if (
+        index !== sequence[position]
+    ) {
+
+        cells[index]
+            .classList.remove("correct");
+
+        cells[index]
+            .classList.add("wrong");
+
+
+        setTimeout(() => {
+
+            cells[index]
+                .classList.remove("wrong");
+
+        }, 400);
+
+
+        gameOver();
+
+        return;
+
+    }
+
+
+    /*
+       ENTIRE SEQUENCE CORRECT
+    */
+
+    if (
+        playerSequence.length ===
+        sequence.length
+    ) {
+
+        locked = true;
+
+
+        info.textContent =
+            "TRACE COMPLETE";
+
+
+        level++;
+
+
+        setTimeout(
+            nextLevel,
+            700
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   GAME OVER
+===================================================== */
+
+function gameOver() {
+
+    gameActive = false;
+
+    locked = true;
+
+
+    info.textContent =
+        "TRACE LOST";
+
+
+    message.innerHTML = `
+
+        <h1>
+            TRACE LOST
+        </h1>
+
+        <p>
+            YOU REACHED LEVEL ${level}
+        </p>
+
+        <button onclick="startGame()">
+            RETRY
+        </button>
+
+    `;
+
+
+    message.style.display =
+        "flex";
+
+}
+
+
+/* =====================================================
+   WAIT
+===================================================== */
+
+function wait(ms) {
+
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                ms
+            )
+    );
+
+}
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+createGrid();
+
+
+</script>
+
+
+</body>
+
+</html>
