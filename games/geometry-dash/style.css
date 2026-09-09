@@ -1,0 +1,320 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #050509;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    color: white;
+}
+
+#game {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: #050509;
+}
+
+canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+#hud {
+    position: absolute;
+    top: 18px;
+    left: 22px;
+    right: 22px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.hud-left {
+    text-shadow: 0 2px 8px #000;
+}
+
+.game-title {
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 3px;
+}
+
+#levelName {
+    margin-top: 5px;
+    font-size: 11px;
+    opacity: .65;
+    letter-spacing: 2px;
+}
+
+.progress-container {
+    position: absolute;
+    left: 50%;
+    top: 4px;
+    transform: translateX(-50%);
+    width: min(420px, 42vw);
+    text-align: center;
+}
+
+.progress-bar {
+    height: 5px;
+    width: 100%;
+    background: rgba(255,255,255,.15);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#progress {
+    width: 0%;
+    height: 100%;
+    background: white;
+    box-shadow:
+        0 0 10px white,
+        0 0 25px rgba(255,255,255,.5);
+}
+
+#progressText {
+    margin-top: 5px;
+    font-size: 10px;
+    opacity: .65;
+    letter-spacing: 1px;
+}
+
+#pauseButton {
+    pointer-events: auto;
+    border: 1px solid rgba(255,255,255,.3);
+    background: rgba(0,0,0,.25);
+    color: white;
+    width: 34px;
+    height: 30px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(35,35,60,.55),
+            rgba(0,0,0,.92)
+        );
+    backdrop-filter: blur(5px);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.logo {
+    text-align: center;
+    font-size: clamp(42px, 8vw, 90px);
+    font-weight: 1000;
+    line-height: .85;
+    letter-spacing: -4px;
+    transform: skew(-5deg);
+    text-shadow:
+        0 5px 0 rgba(255,255,255,.15),
+        0 0 35px rgba(255,255,255,.2);
+}
+
+.logo span {
+    display: block;
+}
+
+.logo strong {
+    display: block;
+    font-size: 1.2em;
+}
+
+.subtitle {
+    margin-top: 25px;
+    font-size: 11px;
+    letter-spacing: 5px;
+    opacity: .55;
+}
+
+button {
+    font-family: inherit;
+}
+
+.main-button,
+.secondary-button {
+    min-width: 220px;
+    padding: 15px 28px;
+    margin-top: 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    transition:
+        transform .12s,
+        background .12s,
+        box-shadow .12s;
+}
+
+.main-button {
+    margin-top: 45px;
+    background: white;
+    color: black;
+    border: none;
+    box-shadow:
+        0 0 25px rgba(255,255,255,.25);
+}
+
+.main-button:hover {
+    transform: scale(1.05);
+    box-shadow:
+        0 0 35px rgba(255,255,255,.5);
+}
+
+.secondary-button {
+    background: rgba(255,255,255,.04);
+    color: white;
+    border: 1px solid rgba(255,255,255,.25);
+}
+
+.secondary-button:hover {
+    background: rgba(255,255,255,.1);
+    transform: scale(1.03);
+}
+
+.controls {
+    margin-top: 45px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    opacity: .35;
+}
+
+#levelSelect h1 {
+    font-size: 25px;
+    letter-spacing: 5px;
+    margin-bottom: 25px;
+}
+
+#levelGrid {
+    display: grid;
+    grid-template-columns:
+        repeat(5, minmax(70px, 90px));
+    gap: 10px;
+    max-width: 500px;
+    max-height: 65vh;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.level-button {
+    aspect-ratio: 1;
+    border: 1px solid rgba(255,255,255,.25);
+    background: rgba(255,255,255,.04);
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 900;
+    transition: .12s;
+}
+
+.level-button:hover {
+    background: rgba(255,255,255,.13);
+    transform: translateY(-2px);
+}
+
+.level-button.locked {
+    opacity: .2;
+    cursor: not-allowed;
+}
+
+.level-number {
+    display: block;
+    font-size: 20px;
+}
+
+.level-difficulty {
+    display: block;
+    margin-top: 4px;
+    font-size: 7px;
+    opacity: .55;
+}
+
+.death-title,
+.complete-title {
+    font-size: clamp(38px, 7vw, 70px);
+    font-weight: 1000;
+    letter-spacing: 3px;
+}
+
+.death-title {
+    color: #ff3c5f;
+    text-shadow: 0 0 30px rgba(255,60,95,.45);
+}
+
+#deathProgress {
+    margin-top: 12px;
+    font-size: 15px;
+    opacity: .6;
+}
+
+.complete-title {
+    color: #fff;
+    text-shadow: 0 0 30px rgba(255,255,255,.4);
+}
+
+#completeName {
+    margin-top: 12px;
+    opacity: .6;
+    letter-spacing: 3px;
+}
+
+@media (max-width: 600px) {
+
+    #hud {
+        top: 10px;
+        left: 12px;
+        right: 12px;
+    }
+
+    .game-title {
+        font-size: 11px;
+    }
+
+    #levelName {
+        font-size: 8px;
+    }
+
+    .progress-container {
+        width: 35vw;
+    }
+
+    #levelGrid {
+        grid-template-columns:
+            repeat(4, minmax(65px, 75px));
+    }
+
+    .logo {
+        letter-spacing: -2px;
+    }
+}
