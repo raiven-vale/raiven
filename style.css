@@ -1,0 +1,1219 @@
+/* ============================================================
+   RAIVEN.EXE — FAITHFUL CONCEPT ART RETRO DESKTOP STYLESHEET
+   Accurately matching theme-midnight and theme-heatwave concept art.
+   ============================================================ */
+
+/* CSS RESET */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --font-retro: 'VT323', monospace;
+  --font-display: 'Chakra Petch', sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-pixel: 'Silkscreen', 'VT323', monospace;
+}
+
+/* ------------------------------------------------------------
+   THEME PALETTES
+   ------------------------------------------------------------ */
+
+/* MIDNIGHT THEME (Exact Concept Image Colors) */
+body.theme-midnight, [data-theme="midnight"] {
+  --bg-canvas: #090b14;
+  --topbar-bg: #181928;
+  --topbar-border: #2c3352;
+  --topbar-text: #e2e8f0;
+  --win-bg: rgba(22, 26, 42, 0.94);
+  --win-border-light: #445484;
+  --win-border-dark: #101424;
+  --win-titlebar-bg: linear-gradient(90deg, #303d66 0%, #1e2540 100%);
+  --win-titlebar-text: #ffffff;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-accent: #38bdf8;
+  --btn-bg: #222b49;
+  --btn-border-light: #4c5d94;
+  --btn-border-dark: #12182b;
+  --btn-text: #e2e8f0;
+  --btn-hover: #2b375c;
+  --pill-bg: #1c233c;
+  --pill-border: #35426b;
+  --pill-text: #cbd5e1;
+  --pill-active-bg: #38bdf8;
+  --pill-active-text: #090d16;
+  --battery-border: #3b4870;
+  --battery-fill: #38bdf8;
+  --taskbar-bg: #100f1c;
+  --taskbar-border: #252b45;
+  --taskbar-text: #cbd5e1;
+  --error-bg: #801818;
+  --error-titlebar: linear-gradient(90deg, #b91c1c, #7f1d1d);
+  --bubble-bg: #1e2642;
+  --bubble-border: #3d4f82;
+  --bubble-text: #f8fafc;
+}
+
+/* HEATWAVE THEME (Exact Concept Image Colors) */
+body.theme-heatwave, [data-theme="heatwave"] {
+  --bg-canvas: #2a160a;
+  --topbar-bg: #c6824f;
+  --topbar-border: #80431a;
+  --topbar-text: #2d1607;
+  --win-bg: #ddcba4;
+  --win-border-light: #f5ecd8;
+  --win-border-dark: #876943;
+  --win-titlebar-bg: linear-gradient(90deg, #c6824f 0%, #ab612d 100%);
+  --win-titlebar-text: #ffffff;
+  --text-main: #2b1507;
+  --text-muted: #6e462b;
+  --text-accent: #b45309;
+  --btn-bg: #cbb489;
+  --btn-border-light: #edd8b4;
+  --btn-border-dark: #7a5e38;
+  --btn-text: #2b1507;
+  --btn-hover: #dec79d;
+  --pill-bg: #cbba95;
+  --pill-border: #9b8159;
+  --pill-text: #2b1507;
+  --pill-active-bg: #ab612d;
+  --pill-active-text: #ffffff;
+  --battery-border: #876943;
+  --battery-fill: #b45309;
+  --taskbar-bg: #522b13;
+  --taskbar-border: #82431d;
+  --taskbar-text: #fde68a;
+  --error-bg: #9a3412;
+  --error-titlebar: linear-gradient(90deg, #c2410c, #9a3412);
+  --bubble-bg: #eee4cb;
+  --bubble-border: #a8906a;
+  --bubble-text: #2b1507;
+}
+
+/* ------------------------------------------------------------
+   BASE LAYOUT
+   ------------------------------------------------------------ */
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  background-color: var(--bg-canvas);
+  color: var(--text-main);
+  overflow-x: hidden;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* CRT Scanlines Overlay */
+#crt-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999;
+  background:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%),
+    radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.35) 100%);
+  background-size: 100% 3px, 100% 100%;
+  opacity: 0.65;
+}
+
+#app-root {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* ------------------------------------------------------------
+   TOP SYSTEM BAR (Direct Concept Match)
+   ------------------------------------------------------------ */
+.system-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--topbar-bg);
+  border-bottom: 2px solid var(--topbar-border);
+  padding: 6px 14px;
+  font-family: var(--font-retro);
+  font-size: 18px;
+  color: var(--topbar-text);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  user-select: none;
+  z-index: 50;
+}
+
+.sys-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sys-app-icon {
+  font-size: 18px;
+}
+
+.sys-title {
+  font-size: 20px;
+  font-family: var(--font-retro);
+  letter-spacing: 0.5px;
+}
+
+.sys-tagline {
+  font-family: var(--font-retro);
+  font-size: 16px;
+  opacity: 0.85;
+}
+
+.sys-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sys-ver {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.sys-pipe {
+  opacity: 0.5;
+}
+
+.sys-sfx-btn {
+  background: transparent;
+  border: 1px solid var(--topbar-border);
+  color: var(--topbar-text);
+  font-family: var(--font-retro);
+  font-size: 16px;
+  padding: 2px 8px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+
+.sys-sfx-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.sys-window-controls {
+  display: flex;
+  gap: 4px;
+  margin-left: 6px;
+}
+
+/* Retro Window Buttons (— □ ✕) */
+.win-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  font-family: var(--font-pixel);
+  cursor: pointer;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border-top: 2px solid var(--win-border-light);
+  border-left: 2px solid var(--win-border-light);
+  border-bottom: 2px solid var(--win-border-dark);
+  border-right: 2px solid var(--win-border-dark);
+  padding: 0;
+  line-height: 1;
+}
+
+.win-btn:active {
+  border-top: 2px solid var(--win-border-dark);
+  border-left: 2px solid var(--win-border-dark);
+  border-bottom: 2px solid var(--win-border-light);
+  border-right: 2px solid var(--win-border-light);
+}
+
+.win-btn-close:hover {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+/* ------------------------------------------------------------
+   DESKTOP VIEWPORT & 3-COLUMN COMPOSITION
+   ------------------------------------------------------------ */
+#desktop-viewport {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 310px 1fr 330px;
+  gap: 16px;
+  padding: 16px;
+  align-items: start;
+}
+
+.desktop-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ------------------------------------------------------------
+   RETRO WINDOW FRAMEWORK
+   ------------------------------------------------------------ */
+.retro-window {
+  background: var(--win-bg);
+  border-top: 2px solid var(--win-border-light);
+  border-left: 2px solid var(--win-border-light);
+  border-bottom: 2px solid var(--win-border-dark);
+  border-right: 2px solid var(--win-border-dark);
+  box-shadow: 2px 3px 12px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(4px);
+}
+
+.window-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background: var(--win-titlebar-bg);
+  color: var(--win-titlebar-text);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  user-select: none;
+}
+
+.titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.window-icon {
+  font-size: 14px;
+}
+
+.window-controls {
+  display: flex;
+  gap: 3px;
+}
+
+.window-body {
+  padding: 12px;
+  color: var(--text-main);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Retro Push Button */
+.retro-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  font-family: var(--font-retro);
+  font-size: 18px;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border-top: 2px solid var(--btn-border-light);
+  border-left: 2px solid var(--btn-border-light);
+  border-bottom: 2px solid var(--btn-border-dark);
+  border-right: 2px solid var(--btn-border-dark);
+  cursor: pointer;
+  user-select: none;
+  transition: filter 0.15s;
+}
+
+.retro-btn:hover {
+  filter: brightness(1.1);
+}
+
+.retro-btn:active {
+  border-top: 2px solid var(--btn-border-dark);
+  border-left: 2px solid var(--btn-border-dark);
+  border-bottom: 2px solid var(--btn-border-light);
+  border-right: 2px solid var(--btn-border-light);
+}
+
+/* ------------------------------------------------------------
+   LEFT COLUMN WINDOWS
+   ------------------------------------------------------------ */
+
+/* 1. 3 AM Thought Generator */
+.thought-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.thought-message {
+  font-family: var(--font-retro);
+  font-size: 20px;
+  line-height: 1.35;
+  min-height: 52px;
+  color: var(--text-main);
+}
+
+.window-footer-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* 2. Vibe Selector */
+.vibe-buttons-row {
+  display: flex;
+  gap: 10px;
+}
+
+.vibe-pill {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-family: var(--font-retro);
+  font-size: 18px;
+  background: var(--pill-bg);
+  border: 1px solid var(--pill-border);
+  color: var(--pill-text);
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+.vibe-pill.active {
+  background: var(--pill-active-bg);
+  color: var(--pill-active-text);
+  font-weight: bold;
+  border-color: var(--pill-active-bg);
+}
+
+.vibe-bullet {
+  font-size: 12px;
+}
+
+/* 3. Energy Level */
+.energy-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.battery-meter-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.battery-casing-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.battery-casing {
+  flex: 1;
+  height: 22px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 2px solid var(--battery-border);
+  border-radius: 2px;
+  padding: 2px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.battery-terminal {
+  width: 5px;
+  height: 10px;
+  background: var(--battery-border);
+  border-radius: 0 2px 2px 0;
+  margin-left: 1px;
+}
+
+.battery-fill {
+  height: 100%;
+  border-radius: 1px;
+  transition: width 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Dynamic Battery Colors: Red -> Yellow -> Green */
+.battery-fill.battery-level-red {
+  background: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.75);
+}
+
+.battery-fill.battery-level-yellow {
+  background: #eab308;
+  box-shadow: 0 0 8px rgba(234, 179, 8, 0.75);
+}
+
+.battery-fill.battery-level-green {
+  background: #22c55e;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.85);
+}
+
+.battery-label {
+  font-family: var(--font-retro);
+  font-size: 22px;
+  min-width: 44px;
+  font-weight: bold;
+  text-align: right;
+  transition: color 0.3s ease;
+}
+
+.battery-label.level-red {
+  color: #f87171;
+  text-shadow: 0 0 6px rgba(248, 113, 113, 0.4);
+}
+
+.battery-label.level-yellow {
+  color: #fde047;
+  text-shadow: 0 0 6px rgba(253, 224, 71, 0.4);
+}
+
+.battery-label.level-green {
+  color: #4ade80;
+  text-shadow: 0 0 6px rgba(74, 222, 128, 0.4);
+}
+
+/* Energy Status Message Box */
+.energy-status-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--win-border-light);
+  border-radius: 2px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+  min-height: 48px;
+}
+
+.energy-status-prefix {
+  font-family: var(--font-retro);
+  font-size: 18px;
+  color: var(--text-accent);
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.energy-status-msg {
+  font-family: var(--font-retro);
+  font-size: 17px;
+  line-height: 1.3;
+  color: var(--text-main);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Coffee Mug Button */
+.coffee-mug-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 14px;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border-top: 2px solid var(--btn-border-light);
+  border-left: 2px solid var(--btn-border-light);
+  border-bottom: 2px solid var(--btn-border-dark);
+  border-right: 2px solid var(--btn-border-dark);
+  cursor: pointer;
+  user-select: none;
+  border-radius: 2px;
+  transition: filter 0.15s, transform 0.08s;
+}
+
+.coffee-mug-btn:hover {
+  filter: brightness(1.15);
+}
+
+.coffee-mug-btn:hover .mug-visual {
+  transform: scale(1.1) rotate(-6deg);
+}
+
+.coffee-mug-btn:active {
+  border-top: 2px solid var(--btn-border-dark);
+  border-left: 2px solid var(--btn-border-dark);
+  border-bottom: 2px solid var(--btn-border-light);
+  border-right: 2px solid var(--btn-border-light);
+  transform: translateY(1px);
+}
+
+.mug-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mug-steam {
+  font-family: var(--font-retro);
+  font-size: 14px;
+  color: #fde047;
+  line-height: 0.8;
+  animation: steamDrift 1.4s infinite ease-in-out alternate;
+  user-select: none;
+}
+
+@keyframes steamDrift {
+  0% { transform: translateY(0) scaleX(1); opacity: 0.5; }
+  100% { transform: translateY(-4px) scaleX(1.4); opacity: 1; }
+}
+
+.mug-emoji {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.mug-label-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.mug-action-text {
+  font-family: var(--font-retro);
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1.1;
+  color: var(--text-main);
+}
+
+.mug-boost-tag {
+  font-family: var(--font-retro);
+  font-size: 15px;
+  color: #38bdf8;
+  opacity: 0.9;
+}
+
+/* 4. Do Not Press */
+.do-not-press-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 12px;
+  text-align: center;
+}
+
+.big-red-btn {
+  padding: 10px 24px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  background: #dc2626;
+  border-top: 3px solid #f87171;
+  border-left: 3px solid #f87171;
+  border-bottom: 3px solid #7f1d1d;
+  border-right: 3px solid #7f1d1d;
+  cursor: pointer;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.35);
+  transition: transform 0.08s, filter 0.15s;
+}
+
+.big-red-btn:hover {
+  filter: brightness(1.1);
+}
+
+.big-red-btn:active {
+  border-top: 3px solid #7f1d1d;
+  border-left: 3px solid #7f1d1d;
+  border-bottom: 3px solid #f87171;
+  border-right: 3px solid #f87171;
+  transform: translateY(2px);
+}
+
+.press-subtext {
+  font-family: var(--font-retro);
+  font-size: 18px;
+  color: var(--text-muted);
+}
+
+.press-special-msg {
+  width: 100%;
+  font-family: var(--font-retro);
+  font-size: 17px;
+  line-height: 1.3;
+  color: #f87171;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px dashed rgba(239, 68, 68, 0.4);
+  border-radius: 2px;
+  padding: 8px 10px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.big-red-btn.shaking {
+  animation: redBtnShake 0.25s ease-in-out;
+}
+
+@keyframes redBtnShake {
+  0%, 100% { transform: translateX(0) scale(0.98); }
+  25% { transform: translateX(-4px) rotate(-1deg); }
+  75% { transform: translateX(4px) rotate(1deg); }
+}
+
+/* ------------------------------------------------------------
+   CENTER COLUMN WINDOWS & CONTENT
+   ------------------------------------------------------------ */
+
+/* 5. Profile Card */
+.profile-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.profile-header-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.profile-avatar-wrap {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--win-border-light);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-bio-details {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.profile-name {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  line-height: 1.1;
+}
+
+.profile-tagline {
+  font-family: var(--font-retro);
+  font-size: 18px;
+  color: var(--text-muted);
+}
+
+.profile-info-line {
+  font-family: var(--font-retro);
+  font-size: 18px;
+}
+
+.profile-interests {
+  font-family: var(--font-retro);
+  font-size: 17px;
+  color: var(--text-accent);
+}
+
+.profile-quote {
+  font-family: var(--font-retro);
+  font-size: 17px;
+  font-style: italic;
+  opacity: 0.9;
+  margin-top: 4px;
+}
+
+/* Social links pill bar */
+.social-links-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-top: 1px dashed var(--pill-border);
+  padding-top: 10px;
+}
+
+.social-pill {
+  padding: 4px 12px;
+  font-family: var(--font-retro);
+  font-size: 18px;
+  background: var(--pill-bg);
+  border: 1px solid var(--pill-border);
+  color: var(--pill-text);
+  border-radius: 2px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.social-pill:hover {
+  background: var(--pill-active-bg);
+  color: var(--pill-active-text);
+}
+
+/* 6. Quick Links Window */
+.quick-links-body {
+  padding: 8px 12px;
+}
+
+.quick-links-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.quick-link-item {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-family: var(--font-retro);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 3px 0;
+  transition: color 0.15s, transform 0.15s;
+}
+
+.quick-link-item:hover {
+  color: var(--text-accent);
+  transform: translateX(4px);
+}
+
+/* 7. Stickers Board (Scattered over center lower area) */
+.stickers-board {
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px dashed var(--pill-border);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stickers-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-retro);
+  font-size: 18px;
+  color: var(--text-muted);
+}
+
+.stickers-subhint {
+  font-size: 15px;
+  opacity: 0.8;
+}
+
+.stickers-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.sticker-item {
+  width: 58px;
+  height: 58px;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sticker-item:hover {
+  transform: scale(1.15) rotate(-3deg);
+  filter: brightness(1.15);
+  z-index: 5;
+}
+
+.sticker-item:active {
+  transform: scale(0.95);
+}
+
+.sticker-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ------------------------------------------------------------
+   RIGHT COLUMN WINDOWS
+   ------------------------------------------------------------ */
+
+/* 8. Motivation Not Found Error Window */
+.error-dialog {
+  border-color: #ef4444;
+}
+
+.error-titlebar {
+  background: var(--error-titlebar);
+}
+
+.error-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.error-msg-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.error-big-icon {
+  font-size: 26px;
+}
+
+.error-msg-text strong {
+  font-family: var(--font-display);
+  font-size: 14px;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.error-msg-text p {
+  font-family: var(--font-retro);
+  font-size: 17px;
+  color: var(--text-muted);
+}
+
+.error-buttons-row {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* 9. Random Music */
+.music-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.now-playing-label {
+  font-family: var(--font-retro);
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.now-playing-title {
+  font-family: var(--font-retro);
+  font-size: 20px;
+  color: var(--text-accent);
+  font-weight: bold;
+}
+
+.music-pills-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.music-genre-pill {
+  padding: 4px 10px;
+  font-family: var(--font-retro);
+  font-size: 16px;
+  background: var(--btn-bg);
+  border: 1px solid var(--pill-border);
+  color: var(--btn-text);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+
+.music-genre-pill.active {
+  background: var(--pill-active-bg);
+  color: var(--pill-active-text);
+  font-weight: bold;
+}
+
+/* 10. Fun Counter */
+.fun-counter-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-retro);
+  font-size: 19px;
+}
+
+.fun-counter-sub {
+  color: var(--text-muted);
+}
+
+/* 11. Pixel Character Window */
+.pixel-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 10px;
+}
+
+.pixel-speech-bubble {
+  background: var(--bubble-bg);
+  border: 2px solid var(--bubble-border);
+  color: var(--bubble-text);
+  font-family: var(--font-retro);
+  font-size: 19px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  position: relative;
+  text-align: center;
+  width: 90%;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.pixel-speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px 8px 0;
+  border-style: solid;
+  border-color: var(--bubble-border) transparent;
+  display: block;
+  width: 0;
+}
+
+.pixel-stage {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pixel-character-img {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  z-index: 2;
+}
+
+.pixel-character-img:hover {
+  transform: scale(1.08);
+}
+
+.pixel-ground-shadow {
+  position: absolute;
+  bottom: 12px;
+  width: 60px;
+  height: 10px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 70%);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.pixel-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.pixel-option-btn {
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-family: var(--font-retro);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 2px 4px;
+  transition: color 0.15s, transform 0.15s;
+}
+
+.pixel-option-btn:hover {
+  color: var(--text-accent);
+  transform: translateX(4px);
+}
+
+/* 12. Desktop Trash Shortcut */
+.desktop-trash-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-family: var(--font-retro);
+  color: var(--text-main);
+  padding: 10px;
+  cursor: pointer;
+  user-select: none;
+  opacity: 0.85;
+  transition: opacity 0.2s, transform 0.2s;
+  align-self: flex-end;
+  margin-top: 10px;
+}
+
+.desktop-trash-item:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.desktop-trash-item .trash-icon {
+  font-size: 32px;
+}
+
+.desktop-trash-item .trash-name {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.desktop-trash-item .trash-sub {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* ------------------------------------------------------------
+   BOTTOM TASKBAR (Concept Layout)
+   ------------------------------------------------------------ */
+.desktop-taskbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--taskbar-bg);
+  border-top: 2px solid var(--taskbar-border);
+  padding: 6px 14px;
+  font-family: var(--font-retro);
+  font-size: 18px;
+  color: var(--taskbar-text);
+  user-select: none;
+  z-index: 50;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.taskbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.taskbar-start-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  font-family: var(--font-retro);
+  font-size: 19px;
+  font-weight: bold;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border-top: 2px solid var(--win-border-light);
+  border-left: 2px solid var(--win-border-light);
+  border-bottom: 2px solid var(--win-border-dark);
+  border-right: 2px solid var(--win-border-dark);
+  cursor: pointer;
+}
+
+.taskbar-start-btn:active {
+  border-top: 2px solid var(--win-border-dark);
+  border-left: 2px solid var(--win-border-dark);
+  border-bottom: 2px solid var(--win-border-light);
+  border-right: 2px solid var(--win-border-light);
+}
+
+.taskbar-trash-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.taskbar-trash-item:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.taskbar-center {
+  display: flex;
+  align-items: center;
+}
+
+.taskbar-quote {
+  font-size: 17px;
+  opacity: 0.9;
+}
+
+.taskbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.taskbar-clock {
+  font-family: var(--font-retro);
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+
+/* ------------------------------------------------------------
+   RESPONSIVE DESIGN (Adaptive Flow)
+   ------------------------------------------------------------ */
+@media (max-width: 1080px) {
+  #desktop-viewport {
+    grid-template-columns: 290px 1fr;
+  }
+  .right-column {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  #desktop-viewport {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 10px;
+  }
+  .system-bar {
+    font-size: 15px;
+    padding: 4px 8px;
+  }
+  .sys-tagline {
+    display: none;
+  }
+  .right-column {
+    grid-template-columns: 1fr;
+  }
+  .taskbar-center {
+    display: none;
+  }
+}

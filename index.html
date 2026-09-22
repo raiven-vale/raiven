@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="midnight">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RAIVEN.EXE</title>
+  <meta name="description" content="A retro personal computer desktop environment faithfully designed after the original concept art.">
+  <link rel="icon" type="image/jpeg" href="assets/pfp.png.jpg">
+
+  <!-- Google Fonts: VT323 for retro terminal/OS, Chakra Petch for titles, Plus Jakarta Sans & Silkscreen -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=VT323&family=Silkscreen&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-midnight">
+
+  <!-- CRT Scanline & Screen Vignette Overlay -->
+  <div id="crt-overlay" aria-hidden="true"></div>
+
+  <!-- MAIN RETRO DESKTOP ENVIRONMENT -->
+  <div id="app-root">
+
+    <!-- TOP SYSTEM TITLEBAR (Faithful to Concept Image) -->
+    <header id="top-system-bar" class="system-bar">
+      <div class="sys-left">
+        <span class="sys-app-icon">👾</span>
+        <strong id="sys-title-text" class="sys-title">Raiven.exe</strong>
+        <span class="sys-tagline">Just a guy with a laptop, bad sleep, and too many tabs open...</span>
+      </div>
+      <div class="sys-right">
+        <span class="sys-ver">ver 0.1.0</span>
+        <span class="sys-pipe">|</span>
+        <button id="btn-sfx-toggle" class="sys-sfx-btn" title="Toggle Sound Effects">
+          SFX: <span id="sfx-status-text">ON</span>
+        </button>
+        <div class="sys-window-controls">
+          <button id="ctrl-min" class="win-btn win-btn-min" title="Minimize">—</button>
+          <button id="ctrl-max" class="win-btn win-btn-max" title="Maximize">□</button>
+          <button id="ctrl-close" class="win-btn win-btn-close" title="Close">✕</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- DESKTOP WORKSPACE (3 Columns matching Concept Art) -->
+    <main id="desktop-viewport">
+
+      <!-- LEFT COLUMN -->
+      <section class="desktop-column left-column">
+
+        <!-- 1. 3 AM THOUGHT GENERATOR -->
+        <article id="win-thought" class="retro-window">
+          <div class="window-titlebar">
+            <div class="titlebar-left">
+              <span class="window-icon">🌙</span>
+              <span class="window-title-text">3 AM Thought Generator</span>
+            </div>
+            <div class="window-controls">
+              <button class="win-btn win-btn-min" title="Minimize">—</button>
+              <button class="win-btn win-btn-max" title="Maximize">□</button>
+              <button class="win-btn win-btn-close" title="Close">✕</button>
+            </div>
+          </div>
+          <div class="window-body thought-body">
+            <div class="thought-container">
+              <p id="thought-text" class="thought-message">
+                "If a tree falls in a forest and no one hears it... does it still give up on its dreams?"
+              </p>
+            </div>
+            <div class="window-footer-row">
+              <button id="btn-next-thought" class="retro-btn">
+                <span>Another one</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 2. VIBE SELECTOR -->
+        <article id="win-vibe" class="retro-window">
+          <div class="window-titlebar">
+            <div class="titlebar-left">
+              <span class="window-icon">🎛️</span>
+              <span class="window-title-text">Vibe Selector</span>
+            </div>
+            <div class="window-controls">
+              <button class="win-btn win-btn-min" title="Minimize">—</button>
+              <button class="win-btn win-btn-max" title="Maximize">□</button>
+              <button class="win-btn win-btn-close" title="Close">✕</button>
+            </div>
+          </div>
+          <div class="window-body vibe-body">
+            <div class="vibe-buttons-row">
+              <button id="btn-vibe-midnight" class="vibe-pill active" data-vibe="midnight">
+                <span class="vibe-bullet">●</span> Midnight
+              </button>
+              <button id="btn-vibe-heatwave" class="vibe-pill" data-vibe="heatwave">
+                <span class="vibe-bullet">○</span> Heatwave
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 3. ENERGY LEVEL -->
+        <article id="win-energy" class="retro-window">
+          <div class="window-titlebar">
+            <div class="titlebar-left">
+              <span class="window-icon">🔋</span>
+              <span id="energy-title-text" class="window-title-text">Energy Level: 3%</span>
+            </div>
+            <div class="window-controls">
+              <button class="win-btn win-btn-min" title="Minimize">—</button>
+              <button class="win-btn win-btn-max" title="Maximize">□</button>
+              <button class="win-btn win-btn-close" title="Close">✕</button>
+            </div>
+          </div>
+          <div class="window-body energy-body">
+            <!-- Retro Battery Meter with Terminal Tip -->
+            <div class="battery-meter-wrap">
+              <div class="battery-casing-container">
+                <div class="battery-casing">
+                  <div id="battery-fill" class="battery-fill battery-level-red" style="width: 3%;"></div>
+                </div>
+                <div class="battery-terminal"></div>
+              </div>
+              <span id="battery-label" class="battery-label level-red">3%</span>
+            </div>
+
+            <!-- Dynamic Energy Status Message -->
+            <div class="energy-status-box">
+              <span class="energy-status-prefix">&gt;</span>
+              <p id="energy-status-msg" class="energy-status-msg">"Brain running on 3% emergency power. Barely awake..."</p>
+            </div>
+
+            <!-- Interactive Coffee Mug Button -->
+            <div class="energy-action-row">
+              <button id="btn-coffee-mug" class="coffee-mug-btn" title="Click to sip coffee and boost energy!">
+                <span class="mug-visual">
+                  <span class="mug-steam" aria-hidden="true">~</span>
+                  <span class="mug-emoji">☕</span>
+                </span>
+                <span class="mug-label-group">
+                  <span class="mug-action-text">Drink Coffee</span>
+                  <span class="mug-boost-tag">+10% Energy</span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 4. DO NOT PRESS -->
+        <article id="win-do-not-press" class="retro-window">
+          <div class="window-titlebar">
+            <div class="titlebar-left">
+              <span class="window-icon">⚠️</span>
+              <span class="window-title-text">Do Not Press</span>
+            </div>
+            <div class="window-controls">
+              <button class="win-btn win-btn-min" title="Minimize">—</button>
+              <button class="win-btn win-btn-max" title="Maximize">□</button>
+              <button class="win-btn win-btn-close" title="Close">✕</button>
+            </div>
+          </div>
+          <div class="window-body do-not-press-body">
+            <button id="btn-do-not-press" class="big-red-btn">
+              DO NOT PRESS
+            </button>
+            <p id="do-not-press-subtext" class="press-subtext">
+              You pressed this <span id="do-not-press-count">0</span> times for no reason.
+            </p>
+            <div id="do-not-press-msg" class="press-special-msg">
+              "Do NOT press it. Seriously."
+            </div>
+          </div>
+        </article>
+
+      </section>
+
+      <!-- CENTER COLUMN -->
+      <section class="desktop-column center-column">
+
+        <!-- 5. BIO / PROFILE CARD -->
+        <article id="profile-card" class="retro-window profile-window">
+          <div class="window-titlebar">
+            <div class="titlebar-left">
+              <span class="window-icon">👑</span>
+              <span class="window-title-text">Raiven Profile</span>
+            </div>
+            <div class="window-controls">
+              <button class="win-btn win-btn-min" title="Minimize">—</button>
+              <button class="win-btn win-btn-max" title="Maximize">□</button>
+              <button class="win-btn win-btn-close" title="Close">✕</button>
+            </div>
+          </div>
+          <div class="window-body profile-body">
+            <div class="profile-header-row">
+              <div class="profile-avatar-wrap">
+                <img src="assets/pfp.png.jpg" alt="Raiven Profile" class="profile-avatar">
+              </div>
+              <div class="profile-bio-details">
+                <h1 class="profile-name">RAIVEN</h1>
+                <p class="profile-tagline">same brain. different tab.</p>
+                <p class="profile-info-line">15 y/o | Dhaka, Bangladesh</p>
+                <p class="profile-interests">Anime · Music · Random Shit</p>
+                <blockquote class="profile-quote">"Not lazy, just on energy saving mode."</blockquote>
+              </div>
+            </div>
+
+            <!-- Social Links Row -->
+            <div class="social-links-row">
+              <a href="https://www.instagram.com/_raiven.vale/" target="_blank" rel="noopener noreferrer" class="social-pill">
+                Instagram
+              </a>
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-pill">
+                GitHub
+              </a>
+              <button id="btn-social-spotify" class="social-pill">
+                Spotify
+              </button>
+              <button id="btn-social-youtube" class="social-pill">
+                YouTube
+              </button>
+              <button id="btn-social-email" class="social-pill">
+                Email
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 6. QUICK LINKS WINDOW -->
+        <article id="win-quick-links" class="retro-window">
+          <div class="window-titlebar">
+            <div class="titlebar-left">
+              <span class="window-icon">📌</span>
+              <span class="window-title-text">Quick Links</span>
+            </div>
+            <div class="window-controls">
+              <button class="win-btn win-btn-min" title="Minimize">—</button>
+              <button class="win-btn win-btn-max" title="Maximize">□</button>
+              <button class="win-btn win-btn-close" title="Close">✕</button>
+            </div>
+          </div>
+          <div class="window-body quick-links-body">
+            <ul class="quick-links-list">
+              <li>
+                <button id="link-github-repo" class="quick-link-item">
+                  &gt; My GitHub Repository
+                </button>
+              </li>
+              <li>
+                <button id="link-anime-list" class="quick-link-item">
+                  &gt; Anime List (maybe)
+                </button>
+              </li>
+              <li>
+                <button id="link-random-stuff" class="quick-link-item">
+                  &gt; Random Stuff
+                </button>
+              </li>
+              <li>
+                <button id="link-about-me" class="quick-link-item">
+                  &gt; About Me (if you're curious)
+                </button>
+              </li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- 7. STICKERS AREA -->
+        <div id="stickers-board" class="stickers-board">
+          <div class="stickers-header">
+            <span class="stickers-hint">Click the stickers</span>
+            <small class="stickers-subhint">(there's stuff here...)</small>
+          </div>
+          <div class="stickers-flex">
+            <div class="sticker-item" data-id="1" title="Good Game">
+              <img src="assets/stickers/1.jfif" alt="Sticker 1" class="sticker-img">
+            </div>
+            <div class="sticker-item" data-id="2" title="Cosmic Planet">
+              <img src="assets/stickers/2.jfif" alt="Sticker 2" class="sticker-img">
+            </div>
+            <div class="sticker-item" data-id="3" title="Cassette Tape">
+              <img src="assets/stickers/3.jfif" alt="Sticker 3" class="sticker-img">
+            </div>
+            <div class="sticker-item" data-id="4" title="Sleepy Cat">
+              <img src="assets/stickers/4.jfif" alt="Sticker 4" class="sticker-img">
+            </div>
+            <div class="sticker-item" data-id="5" title="Headphones">
+              <img src="assets/stickers/5.jfif" alt="Sticker 5" class="sticker-img">
+            </div>
+            <div class="sticker-item" data-id="6" title="Gamepad">
+              <img src="assets/stickers/6.jfif" alt="Sticker 6" class="sticker-img">
+            </div>
+            <div class="sticker-item" data-id="7" title="Oni Mask">
+              <img src="assets/stickers/7.jfif" alt="Sticker 7" class="sticker-img">
+            </div>
+            <div class="sticker-item" data-id="8" title="Hot Coffee">
+              <img src="assets/stickers/8.jfif" alt="Sticker 8" class="sticker-img">
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- RIGHT COLUMN -->
+      <section class="desktop-column right-column">
+
+        <!-- 8. MOTIVATION NOT FOUND -->
+        <article id="win-motivation" class="retro-window error-dialog">
+          <div class="window-titlebar error-titlebar">
+            <div class="titlebar-left">
+              <span class="window-icon">🛑</span>
+              <span class="window-title-text">Motivation Not Found.</span>
+            </div>
+            <div class="window-controls">
+              <button class="win-btn win-btn-close" title="Close">✕</button>
+            </div>
+          </div>
+          <div class="window-body error-dialog-body">
+            <div class="error-msg-row">
+              <span class="error-big-icon">🛑</span>
+              <div class="error-msg-text">
+                <strong>Motivation Not Found.</strong>
+                <p>The system searched all neural pathways and found 0 motivation units.</p>
+              </div>
+            </div>
+            <div class="error-buttons-row">
+              <button id="btn-motivation-retry" class="retro-btn">Retry</button>
+              <button id="btn-motivation-ignore" class="retro-btn">Ignore</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 9. RANDOM MUSIC -->
+        <article id="win-music" class="retro-window">
+          <div class="window-titlebar">
+            <div class="titlebar-left">
+              <span class="window-icon">📻</span>
+              <span class="window-title-text">Random Music</span>
+            </div>
+            <div class="window-controls">
+              <button class="win-btn win-btn-min" title="Minimize">—</button>
+              <button class="win-btn win-btn-max" title="Maximize">□</button>
+              <button class="win-btn win-btn-close" title="Close">✕</button>
+            </div>
+          </div>
+          <div class="window-body music-body">
+            <div class="now-playing-label">Now Playing:</div>
+            <div id="music-track-title" class="now-playing-title">Lo-Fi Midnight Vibes</div>
+            <div class="music-pills-row">
+              <button id="btn-track-lofi" class="music-genre-pill active">Lo-Fi</button>
+              <button id="btn-track-chaotic" class="music-genre-pill">Chaotic</button>
+              <button id="btn-music-toggle" class="music-genre-pill" title="Play or Pause">▶ Play</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 10. FUN COUNTER -->
+        <article id="win-fun-counter" class="retro-window">
+          <div class="window-titlebar">
+            <div class="titlebar-left">
+              <span class="window-icon">🏆</span>
+              <span class="window-title-text">Fun counter</span>
+            </div>
+            <div class="window-controls">
+              <button class="win-btn win-btn-min" title="Minimize">—</button>
+              <button class="win-btn win-btn-max" title="Maximize">□</button>
+              <button class="win-btn win-btn-close" title="Close">✕</button>
+            </div>
+          </div>
+          <div class="window-body fun-counter-body">
+            <p class="fun-counter-text">
+              You've visited this page <span id="visit-count">1</span> times.
+            </p>
+            <p class="fun-counter-sub">Good job.</p>
+          </div>
+        </article>
+
+        <!-- 11. PIXEL CHARACTER -->
+        <article id="win-pixel" class="retro-window pixel-window">
+          <div class="window-titlebar">
+            <div class="titlebar-left">
+              <span class="window-icon">👾</span>
+              <span class="window-title-text">Pixel Character</span>
+            </div>
+            <div class="window-controls">
+              <button class="win-btn win-btn-min" title="Minimize">—</button>
+              <button class="win-btn win-btn-max" title="Maximize">□</button>
+              <button class="win-btn win-btn-close" title="Close">✕</button>
+            </div>
+          </div>
+          <div class="window-body pixel-body">
+            <!-- Speech Bubble -->
+            <div id="pixel-speech" class="pixel-speech-bubble">
+              <span id="pixel-speech-text">"I need a 12-hour nap."</span>
+            </div>
+
+            <!-- Character Actor Stage -->
+            <div id="pixel-stage" class="pixel-stage">
+              <img id="pixel-sprite" src="assets/character/idle.png" alt="Pixel Companion" class="pixel-character-img">
+              <div id="pixel-shadow" class="pixel-ground-shadow"></div>
+            </div>
+
+            <!-- Concept Image 3 Text Options -->
+            <div class="pixel-options-list">
+              <button id="opt-click-me" class="pixel-option-btn">
+                &gt; Click me
+              </button>
+              <button id="opt-say-stupid" class="pixel-option-btn">
+                &gt; I might say something stupid.
+              </button>
+              <button id="opt-fall-over" class="pixel-option-btn">
+                &gt; Or fall over.
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- 12. DESKTOP TRASH CAN SHORTCUT -->
+        <div id="desktop-trash" class="desktop-trash-item" title="TRASH - Nothing important...">
+          <span class="trash-icon">🗑️</span>
+          <span class="trash-name">TRASH</span>
+          <small class="trash-sub">Nothing important...</small>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- BOTTOM TASKBAR (Concept Image Layout) -->
+    <footer id="desktop-taskbar" class="desktop-taskbar">
+      <div class="taskbar-left">
+        <button id="btn-start" class="taskbar-start-btn">
+          <span class="start-icon">🪟</span>
+          <span class="start-text">Start</span>
+        </button>
+        <span class="taskbar-trash-item" id="taskbar-trash">
+          <span class="taskbar-trash-icon">🗑️</span>
+          <span>Nothing important...</span>
+        </span>
+      </div>
+      <div class="taskbar-center">
+        <span class="taskbar-quote">Thanks for visiting. ~ Raiven</span>
+      </div>
+      <div class="taskbar-right">
+        <span id="taskbar-clock" class="taskbar-clock">03:27 PM</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

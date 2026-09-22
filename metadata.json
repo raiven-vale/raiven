@@ -1,0 +1,6 @@
+{
+  "name": "RAIVEN.EXE",
+  "description": "A retro personal computer desktop environment faithfully designed after the original concept art, featuring Raiven's profile, 3 AM thoughts, vibe selector, stickers, retro music, and a pixel companion.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
