@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>RAIVEN.EXE</title>
-  <meta name="description" content="A retro personal computer desktop environment faithfully designed after the original concept art.">
+  <meta name="description" content="A retro personal computer desktop environment faithfully designed after the original concept art, featuring Raiven's profile, 3 AM thoughts, vibe selector, retro music, and a pixel companion.">
+  <meta property="og:title" content="RAIVEN.EXE">
+  <meta property="og:description" content="A retro personal computer desktop environment faithfully designed after the original concept art, featuring Raiven's profile, 3 AM thoughts, vibe selector, retro music, and a pixel companion.">
   <link rel="icon" type="image/jpeg" href="assets/pfp.png.jpg">
 
   <!-- Google Fonts: VT323 for retro terminal/OS, Chakra Petch for titles, Plus Jakarta Sans & Silkscreen -->
@@ -200,7 +202,7 @@
               <div class="profile-bio-details">
                 <h1 class="profile-name">RAIVEN</h1>
                 <p class="profile-tagline">same brain. different tab.</p>
-                <p class="profile-info-line">15 y/o | Dhaka, Bangladesh</p>
+                <p class="profile-info-line">16 y/o | Dhaka, Bangladesh</p>
                 <p class="profile-interests">Anime · Music · Random Shit</p>
                 <blockquote class="profile-quote">"Not lazy, just on energy saving mode."</blockquote>
               </div>
@@ -214,12 +216,12 @@
               <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-pill">
                 GitHub
               </a>
-              <button id="btn-social-spotify" class="social-pill">
+              <a id="btn-social-spotify" href="https://spotify.com" target="_blank" rel="noopener noreferrer" class="social-pill">
                 Spotify
-              </button>
-              <button id="btn-social-youtube" class="social-pill">
+              </a>
+              <a id="btn-social-youtube" href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="social-pill">
                 YouTube
-              </button>
+              </a>
               <button id="btn-social-email" class="social-pill">
                 Email
               </button>
@@ -243,9 +245,9 @@
           <div class="window-body quick-links-body">
             <ul class="quick-links-list">
               <li>
-                <button id="link-github-repo" class="quick-link-item">
+                <a id="link-github-repo" href="https://github.com" target="_blank" rel="noopener noreferrer" class="quick-link-item">
                   &gt; My GitHub Repository
-                </button>
+                </a>
               </li>
               <li>
                 <button id="link-anime-list" class="quick-link-item">
@@ -265,40 +267,6 @@
             </ul>
           </div>
         </article>
-
-        <!-- 7. STICKERS AREA -->
-        <div id="stickers-board" class="stickers-board">
-          <div class="stickers-header">
-            <span class="stickers-hint">Click the stickers</span>
-            <small class="stickers-subhint">(there's stuff here...)</small>
-          </div>
-          <div class="stickers-flex">
-            <div class="sticker-item" data-id="1" title="Good Game">
-              <img src="assets/stickers/1.jfif" alt="Sticker 1" class="sticker-img">
-            </div>
-            <div class="sticker-item" data-id="2" title="Cosmic Planet">
-              <img src="assets/stickers/2.jfif" alt="Sticker 2" class="sticker-img">
-            </div>
-            <div class="sticker-item" data-id="3" title="Cassette Tape">
-              <img src="assets/stickers/3.jfif" alt="Sticker 3" class="sticker-img">
-            </div>
-            <div class="sticker-item" data-id="4" title="Sleepy Cat">
-              <img src="assets/stickers/4.jfif" alt="Sticker 4" class="sticker-img">
-            </div>
-            <div class="sticker-item" data-id="5" title="Headphones">
-              <img src="assets/stickers/5.jfif" alt="Sticker 5" class="sticker-img">
-            </div>
-            <div class="sticker-item" data-id="6" title="Gamepad">
-              <img src="assets/stickers/6.jfif" alt="Sticker 6" class="sticker-img">
-            </div>
-            <div class="sticker-item" data-id="7" title="Oni Mask">
-              <img src="assets/stickers/7.jfif" alt="Sticker 7" class="sticker-img">
-            </div>
-            <div class="sticker-item" data-id="8" title="Hot Coffee">
-              <img src="assets/stickers/8.jfif" alt="Sticker 8" class="sticker-img">
-            </div>
-          </div>
-        </div>
 
       </section>
 
@@ -447,6 +415,29 @@
       </div>
     </footer>
 
+  </div>
+
+  <!-- RETRO SYSTEM DIALOG MODAL (Avoids browser window.alert blocking) -->
+  <div id="retro-dialog-overlay" class="retro-dialog-overlay" style="display: none;" aria-hidden="true">
+    <div id="retro-dialog-win" class="retro-window retro-dialog-box" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+      <div class="window-titlebar">
+        <div class="titlebar-left">
+          <span id="dialog-icon" class="window-icon">💾</span>
+          <span id="dialog-title" class="window-title-text">System Notice</span>
+        </div>
+        <div class="window-controls">
+          <button id="dialog-close-btn" class="win-btn win-btn-close" title="Close">✕</button>
+        </div>
+      </div>
+      <div class="window-body dialog-body">
+        <p id="dialog-message" class="dialog-message-text"></p>
+        <div class="dialog-actions">
+          <button id="dialog-ok-btn" class="retro-btn">
+            <span>OK</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script type="module" src="script.js"></script>

@@ -339,6 +339,53 @@ const DO_NOT_PRESS_FALLBACKS = [
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
 
+  // Retro Modal Dialog Helper (Avoids window.alert for sandboxed iframe compatibility)
+  const dialogOverlay = document.getElementById('retro-dialog-overlay');
+  const dialogIcon = document.getElementById('dialog-icon');
+  const dialogTitle = document.getElementById('dialog-title');
+  const dialogMessage = document.getElementById('dialog-message');
+  const dialogOkBtn = document.getElementById('dialog-ok-btn');
+  const dialogCloseBtn = document.getElementById('dialog-close-btn');
+
+  function showRetroAlert(title, message, icon = '💾') {
+    if (!dialogOverlay) return;
+    if (dialogIcon) dialogIcon.textContent = icon;
+    if (dialogTitle) dialogTitle.textContent = title;
+    if (dialogMessage) dialogMessage.textContent = message;
+    dialogOverlay.style.display = 'flex';
+    dialogOverlay.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeRetroDialog() {
+    if (dialogOverlay) {
+      dialogOverlay.style.display = 'none';
+      dialogOverlay.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  if (dialogOkBtn) {
+    dialogOkBtn.addEventListener('click', () => {
+      sfx.playClick();
+      closeRetroDialog();
+    });
+  }
+
+  if (dialogCloseBtn) {
+    dialogCloseBtn.addEventListener('click', () => {
+      sfx.playClick();
+      closeRetroDialog();
+    });
+  }
+
+  if (dialogOverlay) {
+    dialogOverlay.addEventListener('click', (e) => {
+      if (e.target === dialogOverlay) {
+        sfx.playClick();
+        closeRetroDialog();
+      }
+    });
+  }
+
   // A. Theme Setup (Midnight vs Heatwave)
   const btnMidnight = document.getElementById('btn-vibe-midnight');
   const btnHeatwave = document.getElementById('btn-vibe-heatwave');
@@ -568,14 +615,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnRetry) {
     btnRetry.addEventListener('click', () => {
       sfx.playError();
-      alert("Searching neural network for motivation...\nResult: 0 motivation units found. Try coffee instead.");
+      showRetroAlert("Motivation Search", "Searching neural network for motivation...\nResult: 0 motivation units found. Try coffee instead.", "🛑");
     });
   }
 
   if (btnIgnore) {
     btnIgnore.addEventListener('click', () => {
       sfx.playClick();
-      alert("Procrastination mode permanently engaged.");
+      showRetroAlert("Procrastination Mode", "Procrastination mode permanently engaged.", "💤");
     });
   }
 
@@ -692,19 +739,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // J. Interactive Stickers
-  const stickers = document.querySelectorAll('.sticker-item');
-  stickers.forEach((sticker) => {
-    sticker.addEventListener('click', () => {
-      sfx.playBlip();
-      sticker.style.transform = 'scale(1.3) rotate(8deg)';
-      setTimeout(() => {
-        sticker.style.transform = '';
-      }, 250);
-    });
-  });
-
-  // K. Quick Links Interactions
+  // J. Quick Links Interactions
   const linkGithub = document.getElementById('link-github-repo');
   const linkAnime = document.getElementById('link-anime-list');
   const linkRandom = document.getElementById('link-random-stuff');
@@ -713,28 +748,27 @@ document.addEventListener('DOMContentLoaded', () => {
   if (linkGithub) {
     linkGithub.addEventListener('click', () => {
       sfx.playClick();
-      window.open('https://github.com', '_blank');
     });
   }
 
   if (linkAnime) {
     linkAnime.addEventListener('click', () => {
       sfx.playClick();
-      alert("Anime List:\n1. Steins;Gate\n2. Mob Psycho 100\n3. Hunter x Hunter\n4. Gurren Lagann");
+      showRetroAlert("Anime List", "1. Steins;Gate\n2. Mob Psycho 100\n3. Hunter x Hunter\n4. Gurren Lagann", "🎬");
     });
   }
 
   if (linkRandom) {
     linkRandom.addEventListener('click', () => {
       sfx.playClick();
-      alert("Random fact: Bananas are technically curved berries.");
+      showRetroAlert("Random Fact", "Random fact: Bananas are technically curved berries.", "🍌");
     });
   }
 
   if (linkAbout) {
     linkAbout.addEventListener('click', () => {
       sfx.playClick();
-      alert("Raiven:\n15 years old, based in Dhaka, Bangladesh.\nEnjoys anime, lo-fi beats, and coding at 3 AM.");
+      showRetroAlert("About Raiven", "Raiven:\n16 years old, based in Dhaka, Bangladesh.\nEnjoys anime, lo-fi beats, and coding at 3 AM.", "👑");
     });
   }
 
@@ -746,19 +780,17 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnSpotify) {
     btnSpotify.addEventListener('click', () => {
       sfx.playClick();
-      window.open('https://spotify.com', '_blank');
     });
   }
   if (btnYoutube) {
     btnYoutube.addEventListener('click', () => {
       sfx.playClick();
-      window.open('https://youtube.com', '_blank');
     });
   }
   if (btnEmail) {
     btnEmail.addEventListener('click', () => {
       sfx.playClick();
-      alert("Email: raiven.v.vale@gmail.com");
+      showRetroAlert("Contact Raiven", "Email: raiven.v.vale@gmail.com", "✉️");
     });
   }
 
@@ -767,7 +799,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const taskbarTrash = document.getElementById('taskbar-trash');
   function handleTrash() {
     sfx.playClick();
-    alert("Recycle Bin:\nNothing important here... just discarded sleep schedules and deleted motivation.");
+    showRetroAlert("Recycle Bin", "Nothing important here... just discarded sleep schedules and deleted motivation.", "🗑️");
   }
   if (desktopTrash) desktopTrash.addEventListener('click', handleTrash);
   if (taskbarTrash) taskbarTrash.addEventListener('click', handleTrash);
@@ -777,7 +809,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnStart) {
     btnStart.addEventListener('click', () => {
       sfx.playClick();
-      alert("RAIVEN OS v0.1.0\nReady for new features.");
+      showRetroAlert("RAIVEN OS", "RAIVEN OS v0.1.0\nReady for new features.", "👾");
     });
   }
 
